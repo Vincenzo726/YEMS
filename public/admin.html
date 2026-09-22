@@ -1,15 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
 
   <title>YEMS PERFUME | Admin</title>
 
-  <link rel="stylesheet" href="/css/admin.css" />
+  <link
+    rel="stylesheet"
+    href="/css/admin.css"
+  />
 </head>
 
+
 <body>
+
 
   <!-- =====================================================
        AUTHENTICATION SECTION
@@ -23,8 +32,15 @@
     <div class="auth-card">
 
       <div class="brand-area">
-        <h1>YEMS PERFUME</h1>
-        <p>Admin Management Portal</p>
+
+        <h1>
+          YEMS PERFUME
+        </h1>
+
+        <p>
+          Admin Management Portal
+        </p>
+
       </div>
 
 
@@ -35,7 +51,9 @@
         class="auth-form"
       >
 
-        <h2>Admin Login</h2>
+        <h2>
+          Admin Login
+        </h2>
 
         <p class="form-subtitle">
           Sign in to manage your store.
@@ -116,7 +134,9 @@
         class="auth-form hidden"
       >
 
-        <h2>Create Admin Account</h2>
+        <h2>
+          Create Admin Account
+        </h2>
 
         <p class="form-subtitle">
           Register the authorized store administrator.
@@ -214,6 +234,7 @@
 
 
 
+
   <!-- =====================================================
        DASHBOARD
   ====================================================== -->
@@ -222,6 +243,7 @@
     id="dashboardSection"
     class="dashboard-wrapper hidden"
   >
+
 
     <!-- DASHBOARD HEADER -->
 
@@ -238,7 +260,7 @@
         </h1>
 
         <p class="dashboard-description">
-          Manage your products, inventory and delivery areas.
+          Manage your products, inventory, orders and delivery areas.
         </p>
 
       </div>
@@ -257,6 +279,222 @@
 
 
     <main class="dashboard-content">
+
+
+
+      <!-- =================================================
+           ORDER MANAGEMENT
+      ================================================== -->
+
+      <section class="panel">
+
+        <div class="panel-heading panel-heading-row">
+
+          <div>
+
+            <p class="eyebrow">
+              Orders
+            </p>
+
+            <h2>
+              Order Management
+            </h2>
+
+            <p class="form-subtitle">
+              Search and manage customer orders.
+            </p>
+
+          </div>
+
+
+          <button
+            type="button"
+            id="refreshOrders"
+            class="secondary-button"
+          >
+            Refresh
+          </button>
+
+        </div>
+
+
+
+        <!-- SEARCH ORDER -->
+
+        <div class="order-search-area">
+
+          <div class="form-group order-search-group">
+
+            <label for="orderSearch">
+              Search Order
+            </label>
+
+            <input
+              type="text"
+              id="orderSearch"
+              placeholder="YEMS-20260922-9CA0F7"
+              autocomplete="off"
+            />
+
+          </div>
+
+
+          <button
+            type="button"
+            id="searchOrdersButton"
+            class="primary-button order-search-button"
+          >
+            Search Order
+          </button>
+
+        </div>
+
+
+
+        <!-- ORDER FILTERS -->
+
+        <div class="order-filters">
+
+
+          <div class="form-group">
+
+            <label for="orderMethodFilter">
+              Fulfilment
+            </label>
+
+            <select
+              id="orderMethodFilter"
+            >
+
+              <option value="">
+                All Orders
+              </option>
+
+              <option value="pickup">
+                Pickup
+              </option>
+
+              <option value="delivery">
+                Delivery
+              </option>
+
+            </select>
+
+          </div>
+
+
+
+          <div class="form-group">
+
+            <label for="orderStatusFilter">
+              Order Status
+            </label>
+
+            <select
+              id="orderStatusFilter"
+            >
+
+              <option value="">
+                All Statuses
+              </option>
+
+              <option value="pending">
+                Pending
+              </option>
+
+              <option value="confirmed">
+                Confirmed
+              </option>
+
+              <option value="ready_for_pickup">
+                Ready for Pickup
+              </option>
+
+              <option value="processing">
+                Processing
+              </option>
+
+              <option value="shipped">
+                Shipped
+              </option>
+
+              <option value="delivered">
+                Delivered
+              </option>
+
+              <option value="collected">
+                Collected
+              </option>
+
+              <option value="cancelled">
+                Cancelled
+              </option>
+
+            </select>
+
+          </div>
+
+
+
+          <div class="form-group">
+
+            <label for="orderPaymentFilter">
+              Payment
+            </label>
+
+            <select
+              id="orderPaymentFilter"
+            >
+
+              <option value="">
+                All Payments
+              </option>
+
+              <option value="paid">
+                Paid
+              </option>
+
+              <option value="pending">
+                Pending
+              </option>
+
+              <option value="failed">
+                Failed
+              </option>
+
+            </select>
+
+          </div>
+
+
+        </div>
+
+
+
+        <p
+          id="ordersMessage"
+          class="form-message"
+        ></p>
+
+
+
+        <!-- ORDER LIST -->
+
+        <div
+          id="ordersList"
+          class="orders-list"
+        >
+
+          <p class="empty-message">
+            Loading orders...
+          </p>
+
+        </div>
+
+
+      </section>
+
+
 
 
       <!-- =================================================
@@ -282,10 +520,12 @@
         </div>
 
 
+
         <form
           id="productForm"
           class="product-form"
         >
+
 
           <div class="form-grid">
 
@@ -304,6 +544,7 @@
               />
 
             </div>
+
 
 
             <div class="form-group">
@@ -350,6 +591,7 @@
             </div>
 
 
+
             <div class="form-group">
 
               <label for="productPrice">
@@ -367,6 +609,7 @@
             </div>
 
 
+
             <div class="form-group">
 
               <label for="productSize">
@@ -380,6 +623,7 @@
               />
 
             </div>
+
 
 
             <div class="form-group">
@@ -398,6 +642,7 @@
             </div>
 
 
+
             <div class="form-group">
 
               <label for="productStock">
@@ -414,7 +659,9 @@
 
             </div>
 
+
           </div>
+
 
 
           <div class="form-group">
@@ -432,6 +679,7 @@
           </div>
 
 
+
           <div class="form-group">
 
             <label for="productDescription">
@@ -447,15 +695,18 @@
           </div>
 
 
+
           <div class="form-actions">
 
             <button
               type="submit"
               class="primary-button"
             >
+
               <span id="submitButtonText">
                 Add Product
               </span>
+
             </button>
 
 
@@ -470,14 +721,17 @@
           </div>
 
 
+
           <p
             id="productMessage"
             class="form-message"
           ></p>
 
+
         </form>
 
       </section>
+
 
 
 
@@ -486,6 +740,7 @@
       ================================================== -->
 
       <section class="panel">
+
 
         <div class="panel-heading panel-heading-row">
 
@@ -513,6 +768,7 @@
         </div>
 
 
+
         <div
           id="productsList"
           class="products-list"
@@ -524,7 +780,9 @@
 
         </div>
 
+
       </section>
+
 
 
 
@@ -533,6 +791,7 @@
       ================================================== -->
 
       <section class="panel">
+
 
         <div class="panel-heading">
 
@@ -557,10 +816,12 @@
         </p>
 
 
+
         <form
           id="deliveryForm"
           class="product-form"
         >
+
 
           <div class="form-grid">
 
@@ -581,6 +842,7 @@
               />
 
             </div>
+
 
 
             <!-- STATE -->
@@ -753,6 +1015,7 @@
             </div>
 
 
+
             <!-- DELIVERY FEE -->
 
             <div class="form-group">
@@ -770,6 +1033,7 @@
               />
 
             </div>
+
 
 
             <!-- LATITUDE -->
@@ -791,6 +1055,7 @@
             </div>
 
 
+
             <!-- LONGITUDE -->
 
             <div class="form-group">
@@ -808,6 +1073,7 @@
               />
 
             </div>
+
 
 
             <!-- RADIUS -->
@@ -828,6 +1094,7 @@
               />
 
             </div>
+
 
 
             <!-- ACTIVE -->
@@ -854,7 +1121,9 @@
 
             </div>
 
+
           </div>
+
 
 
           <div class="form-actions">
@@ -863,9 +1132,11 @@
               type="submit"
               class="primary-button"
             >
+
               <span id="deliverySubmitText">
                 Add Delivery Area
               </span>
+
             </button>
 
 
@@ -880,14 +1151,17 @@
           </div>
 
 
+
           <p
             id="deliveryMessage"
             class="form-message"
           ></p>
 
+
         </form>
 
       </section>
+
 
 
 
@@ -896,6 +1170,7 @@
       ================================================== -->
 
       <section class="panel">
+
 
         <div class="panel-heading panel-heading-row">
 
@@ -923,6 +1198,7 @@
         </div>
 
 
+
         <div
           id="deliveryAreasList"
           class="products-list"
@@ -934,14 +1210,18 @@
 
         </div>
 
+
       </section>
+
 
     </main>
 
   </section>
 
 
+
   <script src="/js/admin.js"></script>
 
 </body>
+
 </html>

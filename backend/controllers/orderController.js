@@ -1271,10 +1271,10 @@ async function verifyPayment(
           )
         : new Date();
 
-
-    order.orderStatus =
-      "confirmed";
-
+            order.orderStatus =
+  order.deliveryMethod === "pickup"
+    ? "ready_for_pickup"
+    : "confirmed";
 
     await order.save();
 
@@ -1333,75 +1333,95 @@ async function verifyPayment(
    GET ORDERS
 ===================================================== */
 
-async function getOrders(
-  req,
-  res
-) {
-
+async function getOrders(req, res) {
   try {
+    const {
+      search = "",
+      deliveryMethod = "",
+      orderStatus = "",
+      paymentStatus = "",
+    } = req.query;
 
-    const orders =
-      await Order.find()
+    const query = {};
 
-        .populate(
-          "items.productId"
-        )
+    const cleanSearch = String(search).trim();
 
-        .populate(
-          "deliveryArea.areaId"
-        )
+    if (cleanSearch) {
+      const safeSearch = cleanSearch.replace(
+        /[.*+?^${}()|[\]\\]/g,
+        "\\$&"
+      );
 
-        .sort({
-          createdAt:
-            -1
-        });
+      const regex = new RegExp(
+        safeSearch,
+        "i"
+      );
 
+      query.$or = [
+        {
+          orderReference: regex,
+        },
+        {
+          "customer.fullName": regex,
+        },
+        {
+          "customer.phone": regex,
+        },
+        {
+          "customer.email": regex,
+        },
+      ];
+    }
 
-    return res.status(
-      200
-    ).json({
+    if (
+      deliveryMethod === "delivery" ||
+      deliveryMethod === "pickup"
+    ) {
+      query.deliveryMethod =
+        deliveryMethod;
+    }
 
-      status:
-        "success",
+    if (orderStatus) {
+      query.orderStatus =
+        orderStatus;
+    }
 
-      results:
-        orders.length,
+    if (
+      paymentStatus === "pending" ||
+      paymentStatus === "paid" ||
+      paymentStatus === "failed"
+    ) {
+      query.paymentStatus =
+        paymentStatus;
+    }
 
+    const orders = await Order.find(query)
+      .populate("items.productId")
+      .populate("deliveryArea.areaId")
+      .sort({
+        createdAt: -1,
+      });
+
+    return res.status(200).json({
+      status: "success",
+      results: orders.length,
       data: {
-
-        orders
-
-      }
-
+        orders,
+      },
     });
 
-  } catch (
-    error
-  ) {
-
+  } catch (error) {
     console.error(
       "Get orders error:",
       error
     );
 
-
-    return res.status(
-      500
-    ).json({
-
-      status:
-        "fail",
-
-      message:
-        "Unable to load orders."
-
+    return res.status(500).json({
+      status: "fail",
+      message: "Unable to load orders.",
     });
-
   }
-
 }
-
-
 /* =====================================================
    GET ONE ORDER
 ===================================================== */

@@ -1,6 +1,6 @@
 let editingProductId = null;
 let editingDeliveryAreaId = null;
-
+let currentOrders = [];
 
 // =====================================================
 // NIGERIAN STATES
@@ -126,7 +126,50 @@ const deliveryState =
     "deliveryState"
   );
 
+// =====================================================
+// ORDER ELEMENTS
+// =====================================================
 
+const ordersList =
+  document.getElementById(
+    "ordersList"
+  );
+
+const orderSearch =
+  document.getElementById(
+    "orderSearch"
+  );
+
+const searchOrdersButton =
+  document.getElementById(
+    "searchOrdersButton"
+  );
+
+const refreshOrdersButton =
+  document.getElementById(
+    "refreshOrders"
+  );
+
+const orderMethodFilter =
+  document.getElementById(
+    "orderMethodFilter"
+  );
+
+const orderStatusFilter =
+  document.getElementById(
+    "orderStatusFilter"
+  );
+
+const orderPaymentFilter =
+  document.getElementById(
+    "orderPaymentFilter"
+  );
+
+const ordersMessage =
+  document.getElementById(
+    "ordersMessage"
+  );
+  
 // =====================================================
 // PAGE STARTUP
 // =====================================================

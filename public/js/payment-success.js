@@ -2,14 +2,6 @@ const VERIFY_PAYMENT_BASE =
   "/orders/verify-payment";
 
 
-/*
-  YEMS owner WhatsApp.
-
-  +234 903 645 6992
-  becomes:
-  2349036456992
-*/
-
 const WHATSAPP_NUMBER =
   "2349036456992";
 
@@ -51,6 +43,11 @@ const orderTotalEl =
 const whatsappButton =
   document.getElementById(
     "whatsappButton"
+  );
+
+const pickupDetails =
+  document.getElementById(
+    "pickupDetails"
   );
 
 
@@ -100,11 +97,9 @@ async function verifyPayment() {
 
     const response =
       await fetch(
-
         `${VERIFY_PAYMENT_BASE}/${encodeURIComponent(
           reference
         )}`
-
       );
 
 
@@ -113,22 +108,15 @@ async function verifyPayment() {
 
 
     if (
-
       !response.ok ||
-
       result.status !==
         "success" ||
-
       !result.data?.order
-
     ) {
 
       throw new Error(
-
         result.message ||
-
         "We could not verify this payment."
-
       );
 
     }
@@ -137,11 +125,6 @@ async function verifyPayment() {
     const order =
       result.data.order;
 
-
-    /*
-      We ONLY clear the cart after
-      the backend confirms payment.
-    */
 
     if (
       order.paymentStatus !==
@@ -155,10 +138,14 @@ async function verifyPayment() {
     }
 
 
+    /*
+      Only clear cart after the
+      backend confirms payment.
+    */
+
     localStorage.removeItem(
       "yemsCart"
     );
-
 
     localStorage.removeItem(
       "yemsPendingOrder"
@@ -179,11 +166,8 @@ async function verifyPayment() {
 
 
     showFailure(
-
       error.message ||
-
       "We could not verify this payment."
-
     );
 
   }
@@ -197,18 +181,14 @@ async function verifyPayment() {
 
 function setLoading() {
 
-  if (statusCard) {
+  statusCard?.classList.remove(
+    "success",
+    "error"
+  );
 
-    statusCard.classList.remove(
-      "success",
-      "error"
-    );
-
-    statusCard.classList.add(
-      "loading"
-    );
-
-  }
+  statusCard?.classList.add(
+    "loading"
+  );
 
 
   if (statusIcon) {
@@ -239,6 +219,10 @@ function setLoading() {
     "hidden"
   );
 
+  pickupDetails?.classList.add(
+    "hidden"
+  );
+
 }
 
 
@@ -250,18 +234,14 @@ function showSuccess(
   order
 ) {
 
-  if (statusCard) {
+  statusCard?.classList.remove(
+    "loading",
+    "error"
+  );
 
-    statusCard.classList.remove(
-      "loading",
-      "error"
-    );
-
-    statusCard.classList.add(
-      "success"
-    );
-
-  }
+  statusCard?.classList.add(
+    "success"
+  );
 
 
   if (statusIcon) {
@@ -284,6 +264,10 @@ function showSuccess(
     order.deliveryMethod ===
     "delivery";
 
+  const isPickup =
+    order.deliveryMethod ===
+    "pickup";
+
 
   if (statusText) {
 
@@ -297,6 +281,8 @@ function showSuccess(
   }
 
 
+  /* ORDER REFERENCE */
+
   if (orderReferenceEl) {
 
     orderReferenceEl.textContent =
@@ -306,15 +292,36 @@ function showSuccess(
   }
 
 
+  /* AMOUNT */
+
   if (orderTotalEl) {
 
+    const amount =
+      Number(
+        order.total ??
+        order.subtotal ??
+        0
+      );
+
+
     orderTotalEl.textContent =
-      `₦${Number(
-        order.total || 0
-      ).toLocaleString()}`;
+      `₦${amount.toLocaleString()}`;
 
   }
 
+
+  /* PICKUP */
+
+  if (isPickup) {
+
+    pickupDetails?.classList.remove(
+      "hidden"
+    );
+
+  }
+
+
+  /* DELIVERY */
 
   if (isDelivery) {
 
@@ -327,12 +334,6 @@ function showSuccess(
       "hidden"
     );
 
-
-    /*
-      Automatically send the customer
-      to the owner's WhatsApp after
-      the successful verification screen.
-    */
 
     setTimeout(
       () => {
@@ -363,18 +364,14 @@ function showFailure(
   message
 ) {
 
-  if (statusCard) {
+  statusCard?.classList.remove(
+    "loading",
+    "success"
+  );
 
-    statusCard.classList.remove(
-      "loading",
-      "success"
-    );
-
-    statusCard.classList.add(
-      "error"
-    );
-
-  }
+  statusCard?.classList.add(
+    "error"
+  );
 
 
   if (statusIcon) {
@@ -402,6 +399,10 @@ function showFailure(
 
 
   whatsappButton?.classList.add(
+    "hidden"
+  );
+
+  pickupDetails?.classList.add(
     "hidden"
   );
 
@@ -433,7 +434,6 @@ function prepareWhatsAppMessage(
 
   const message =
     [
-
       "Hello YEMS PERFUME 👋",
 
       "",
@@ -458,7 +458,9 @@ function prepareWhatsAppMessage(
       }`,
 
       `Amount Paid: ₦${Number(
-        order.total || 0
+        order.total ??
+        order.subtotal ??
+        0
       ).toLocaleString()}`,
 
       "",
@@ -474,7 +476,6 @@ function prepareWhatsAppMessage(
       "",
 
       "Thank you."
-
     ].join(
       "\n"
     );

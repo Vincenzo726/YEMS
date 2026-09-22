@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>Checkout | YEMS PERFUME</title>
+
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/checkout.css" />
+</head>
+
+<body>
+
+  <!-- =====================================================
+       ANNOUNCEMENT
+  ====================================================== -->
+
+  <div class="announcement">
+    Premium fragrances. Unforgettable impressions.
+  </div>
+
+
+  <!-- =====================================================
+       HEADER
+  ====================================================== -->
+
+  <header class="header">
+
+    <a
+      href="index.html"
+      class="logo"
+      aria-label="YEMS PERFUME home"
+    >
+
+      <img
+        src="/images/yems-logo.png"
+        alt="YEMS PERFUME"
+        class="brand-logo"
+      />
+
+    </a>
+
+
+    <nav class="nav">
+
+      <a href="index.html">
+        Home
+      </a>
+
+      <a href="shop.html">
+        Shop
+      </a>
+
+      <a href="shop.html#collections">
+        Collections
+      </a>
+
+      <a href="index.html#contact">
+        Contact
+      </a>
+
+    </nav>
+
+
+    <div class="header-actions">
+
+      <a
+        href="cart.html"
+        class="cart-link"
+        aria-label="Shopping cart"
+      >
+
+        🛍
+
+        <span class="cart-count">
+          0
+        </span>
+
+      </a>
+
+    </div>
+
+  </header>
+
+
+
+  <!-- =====================================================
+       CHECKOUT PAGE
+  ====================================================== -->
+
+  <main class="checkout-page">
+
+    <div class="checkout-heading">
+
+      <p class="eyebrow">
+        SECURE CHECKOUT
+      </p>
+
+      <h1>
+        Complete your order.
+      </h1>
+
+    </div>
+
+
+
+    <form
+      class="checkout-layout"
+      id="checkoutForm"
+    >
+
+
+      <!-- =================================================
+           LEFT SIDE
+      ================================================== -->
+
+      <section class="checkout-form">
+
+
+        <!-- =================================================
+             CONTACT INFORMATION
+        ================================================== -->
+
+        <div class="form-section">
+
+          <h2>
+            Contact information
+          </h2>
+
+
+          <div class="form-group">
+
+            <label for="fullName">
+              Full name
+            </label>
+
+            <input
+              type="text"
+              id="fullName"
+              name="fullName"
+              placeholder="Your full name"
+              autocomplete="name"
+              required
+            />
+
+          </div>
+
+
+          <div class="form-row">
+
+            <div class="form-group">
+
+              <label for="email">
+                Email address
+              </label>
+
+              <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="you@example.com"
+                autocomplete="email"
+                required
+              />
+
+            </div>
+
+
+            <div class="form-group">
+
+              <label for="phone">
+                Phone number
+              </label>
+
+              <input
+                type="tel"
+                id="phone"
+                name="phone"
+                placeholder="09000000000"
+                autocomplete="tel"
+                required
+              />
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             FULFILMENT METHOD
+        ================================================== -->
+
+        <div class="form-section">
+
+          <h2>
+            How would you like to receive your order?
+          </h2>
+
+
+          <div
+            class="fulfilment-options"
+            id="fulfilmentOptions"
+          >
+
+
+            <!-- DELIVERY -->
+
+            <label class="fulfilment-option">
+
+              <input
+                type="radio"
+                name="deliveryMethod"
+                value="delivery"
+                checked
+              />
+
+              <div class="fulfilment-option-content">
+
+                <div class="fulfilment-option-icon">
+                  🚚
+                </div>
+
+
+                <div>
+
+                  <strong>
+                    Delivery
+                  </strong>
+
+                  <p>
+                    Your delivery fee and final delivery
+                    arrangements will be discussed on WhatsApp.
+                  </p>
+
+                </div>
+
+              </div>
+
+
+              <span class="fulfilment-radio"></span>
+
+            </label>
+
+
+
+            <!-- PICKUP -->
+
+            <label class="fulfilment-option">
+
+              <input
+                type="radio"
+                name="deliveryMethod"
+                value="pickup"
+              />
+
+              <div class="fulfilment-option-content">
+
+                <div class="fulfilment-option-icon">
+                  📦
+                </div>
+
+
+                <div>
+
+                  <strong>
+                    Pickup
+                  </strong>
+
+                  <p>
+                    Pick up your order directly from YEMS.
+                  </p>
+
+                </div>
+
+              </div>
+
+
+              <span class="fulfilment-radio"></span>
+
+            </label>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             DELIVERY DETAILS
+        ================================================== -->
+
+        <div
+          class="form-section"
+          id="deliverySection"
+        >
+
+          <h2>
+            Delivery details
+          </h2>
+
+
+          <div class="delivery-note-box">
+
+            <div class="delivery-note-icon">
+              💬
+            </div>
+
+
+            <div>
+
+              <strong>
+                Delivery is arranged separately
+              </strong>
+
+              <p>
+                Your payment covers your products only.
+                After your payment is verified, YEMS will
+                take you to WhatsApp to confirm your delivery
+                location, delivery fee and arrangements.
+              </p>
+
+            </div>
+
+          </div>
+
+
+
+          <div class="form-group">
+
+            <label for="address">
+              Delivery address
+              <span class="optional-label">
+                Optional
+              </span>
+            </label>
+
+            <textarea
+              id="address"
+              name="address"
+              placeholder="You can enter your address here, or discuss it with us on WhatsApp after payment."
+              autocomplete="street-address"
+            ></textarea>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             PICKUP DETAILS
+        ================================================== -->
+
+        <div
+          class="form-section hidden"
+          id="pickupSection"
+        >
+
+          <h2>
+            Pickup information
+          </h2>
+
+
+          <div class="pickup-notice">
+
+            <div class="pickup-notice-icon">
+              📦
+            </div>
+
+
+            <div>
+
+              <strong>
+                Pickup selected
+              </strong>
+
+              <p>
+                No delivery fee will be added to your payment.
+              </p>
+
+              <p>
+                Pickup instructions will be communicated after
+                your payment is verified.
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             PAYMENT METHOD
+        ================================================== -->
+
+        <div class="form-section">
+
+          <h2>
+            Payment method
+          </h2>
+
+
+          <div class="payment-option">
+
+            <div class="payment-icon">
+              ₦
+            </div>
+
+
+            <div>
+
+              <strong>
+                Paystack
+              </strong>
+
+              <p>
+                Pay securely with your card, bank transfer or USSD.
+              </p>
+
+            </div>
+
+
+            <input
+              type="radio"
+              name="paymentMethod"
+              value="paystack"
+              checked
+            />
+
+          </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             MESSAGE
+        ================================================== -->
+
+        <p
+          id="checkoutMessage"
+          class="checkout-message"
+          aria-live="polite"
+        ></p>
+
+
+
+        <!-- =================================================
+             PAY BUTTON
+        ================================================== -->
+
+        <button
+          type="submit"
+          class="place-order-btn"
+          id="placeOrderButton"
+        >
+
+          <span id="placeOrderButtonText">
+            Pay for order
+          </span>
+
+          <span>
+            ↗
+          </span>
+
+        </button>
+
+
+        <p class="secure-note">
+          Payment is securely processed by Paystack.
+        </p>
+
+      </section>
+
+
+
+      <!-- =================================================
+           ORDER SUMMARY
+      ================================================== -->
+
+      <aside class="checkout-summary">
+
+        <p class="summary-label">
+          YOUR ORDER
+        </p>
+
+
+        <div id="checkoutItems">
+          <!-- Items loaded by JavaScript -->
+        </div>
+
+
+        <div class="summary-divider"></div>
+
+
+        <div class="summary-row">
+
+          <span>
+            Subtotal
+          </span>
+
+          <strong id="checkoutSubtotal">
+            ₦0
+          </strong>
+
+        </div>
+
+
+        <div class="summary-row">
+
+          <span>
+            Delivery
+          </span>
+
+          <strong id="checkoutDelivery">
+            Discuss on WhatsApp
+          </strong>
+
+        </div>
+
+
+        <div class="summary-divider"></div>
+
+
+        <div class="summary-total">
+
+          <span>
+            Total paid now
+          </span>
+
+          <strong id="checkoutTotal">
+            ₦0
+          </strong>
+
+        </div>
+
+
+        <p class="summary-note">
+          Delivery fee is not included in this payment.
+          It will be discussed and confirmed on WhatsApp.
+        </p>
+
+      </aside>
+
+    </form>
+
+  </main>
+
+
+  <script src="/js/checkout.js"></script>
+
+</body>
+</html>

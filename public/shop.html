@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Shop | YEMS PERFUME</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/shop.css" />
+</head>
+
+<body>
+
+  <!-- ANNOUNCEMENT -->
+  <div class="announcement">
+    Premium fragrances. Unforgettable impressions.
+  </div>
+
+  <!-- HEADER -->
+  <header class="header">
+
+    <a href="index.html" class="logo">
+      <img
+        src="images/yems-logo.png"
+        alt="YEMS PERFUME"
+        class="brand-logo"
+      />
+    </a>
+
+    <nav class="nav">
+      <a href="index.html">Home</a>
+      <a href="shop.html" class="active">Shop</a>
+      <a href="shop.html#collections">Collections</a>
+      <a href="index.html#contact">Contact</a>
+    </nav>
+
+    <div class="header-actions">
+
+      <a href="cart.html" class="cart-link">
+        🛍
+        <span class="cart-count">0</span>
+      </a>
+
+      <button
+        class="menu-btn"
+        type="button"
+        aria-label="Open menu"
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+    </div>
+
+  </header>
+
+
+  <!-- SHOP HERO -->
+  <section class="shop-hero">
+
+    <div class="shop-hero-content">
+
+      <p class="eyebrow">
+        THE YEMS COLLECTION
+      </p>
+
+      <h1>
+        Find your
+        <span>signature scent.</span>
+      </h1>
+
+      <p>
+        Explore fragrances carefully selected to leave a lasting impression.
+      </p>
+
+    </div>
+
+  </section>
+
+
+  <!-- SHOP SECTION -->
+  <main class="shop-section">
+
+    <div class="shop-heading">
+
+      <div>
+
+        <p class="eyebrow">
+          OUR FRAGRANCES
+        </p>
+
+        <h2>
+          Shop the collection
+        </h2>
+
+      </div>
+
+
+      <div class="shop-filter">
+
+        <select id="categoryFilter">
+
+          <option value="all">
+            All fragrances
+          </option>
+
+          <option value="Perfume">
+            Perfume
+          </option>
+
+          <option value="Body Spray">
+            Body Spray
+          </option>
+
+          <option value="Perfume Oil">
+            Perfume Oil
+          </option>
+
+          <option value="Lip Gloss">
+            Lip Gloss
+          </option>
+
+          <option value="Skincare">
+            Skincare
+          </option>
+
+          <option value="Accessories">
+            Accessories
+          </option>
+
+        </select>
+
+      </div>
+
+    </div>
+
+
+    <div class="shop-layout">
+
+      <!-- SIDEBAR -->
+      <aside class="shop-sidebar">
+
+        <p class="sidebar-title">
+          Collections
+        </p>
+
+        <button
+          class="filter-btn active"
+          data-category="all"
+        >
+          All fragrances
+        </button>
+
+        <button
+          class="filter-btn"
+          data-category="Perfume"
+        >
+          Perfume
+        </button>
+
+        <button
+          class="filter-btn"
+          data-category="Body Spray"
+        >
+          Body Spray
+        </button>
+
+        <button
+          class="filter-btn"
+          data-category="Perfume Oil"
+        >
+          Perfume Oil
+        </button>
+
+        <button
+          class="filter-btn"
+          data-category="Lip Gloss"
+        >
+          Lip Gloss
+        </button>
+
+        <button
+          class="filter-btn"
+          data-category="Skincare"
+        >
+          Skincare
+        </button>
+
+        <button
+          class="filter-btn"
+          data-category="Accessories"
+        >
+          Accessories
+        </button>
+
+      </aside>
+
+
+      <!-- PRODUCTS -->
+      <section class="shop-products">
+
+        <div
+          class="product-grid"
+          id="productGrid"
+        >
+          <!-- PRODUCTS WILL LOAD HERE FROM JAVASCRIPT -->
+        </div>
+
+      </section>
+
+    </div>
+
+  </main>
+
+
+  <!-- FOOTER -->
+  <footer class="footer">
+
+    <div class="footer-top">
+
+      <div class="footer-brand">
+
+        <img
+          src="images/yems-logo.png"
+          alt="YEMS PERFUME"
+          class="brand-logo"
+        />
+
+        <p>
+          We cook the smell and you spread it.
+        </p>
+
+      </div>
+
+
+      <div class="footer-column">
+
+        <h4>
+          Explore
+        </h4>
+
+        <a href="index.html">
+          Home
+        </a>
+
+        <a href="shop.html">
+          Shop
+        </a>
+
+        <a href="shop.html#collections">
+          Collections
+        </a>
+
+        <a href="cart.html">
+          Cart
+        </a>
+
+      </div>
+
+
+      <div class="footer-column">
+
+        <h4>
+          Follow us
+        </h4>
+
+        <a
+          href="https://www.instagram.com/yemsperfume/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Instagram ↗
+        </a>
+
+        <a
+          href="https://www.tiktok.com/@yemsperfume"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          TikTok ↗
+        </a>
+
+        <a
+          href="https://wa.me/2349036456992"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          WhatsApp ↗
+        </a>
+
+      </div>
+
+
+      <div class="footer-column">
+
+        <h4>
+          Contact
+        </h4>
+
+        <p>
+          09036456992
+        </p>
+
+        <p>
+          Available for enquiries and orders.
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <div class="footer-bottom">
+
+      <span>
+        © 2026 YEMS PERFUME. All rights reserved.
+      </span>
+
+      <span>
+        Crafted with intention.
+      </span>
+
+    </div>
+
+  </footer>
+
+
+  <!-- JAVASCRIPT -->
+  <script src="js/shop.js"></script>
+  <script src="js/script.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>YEMS PERFUME | Admin</title>
+
+  <link rel="stylesheet" href="/css/admin.css" />
+</head>
+
+<body>
+
+  <!-- =====================================================
+       AUTHENTICATION SECTION
+  ====================================================== -->
+
+  <section
+    id="authSection"
+    class="auth-wrapper"
+  >
+
+    <div class="auth-card">
+
+      <div class="brand-area">
+        <h1>YEMS PERFUME</h1>
+        <p>Admin Management Portal</p>
+      </div>
+
+
+      <!-- LOGIN -->
+
+      <form
+        id="loginForm"
+        class="auth-form"
+      >
+
+        <h2>Admin Login</h2>
+
+        <p class="form-subtitle">
+          Sign in to manage your store.
+        </p>
+
+
+        <div class="form-group">
+
+          <label for="loginEmail">
+            Email Address
+          </label>
+
+          <input
+            type="email"
+            id="loginEmail"
+            name="email"
+            placeholder="Enter your email"
+            autocomplete="email"
+            required
+          />
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label for="loginPassword">
+            Password
+          </label>
+
+          <input
+            type="password"
+            id="loginPassword"
+            name="password"
+            placeholder="Enter your password"
+            autocomplete="current-password"
+            required
+          />
+
+        </div>
+
+
+        <button
+          type="submit"
+          class="primary-button"
+        >
+          Login
+        </button>
+
+
+        <p
+          id="loginMessage"
+          class="form-message"
+        ></p>
+
+
+        <p class="auth-switch">
+
+          Don't have an account?
+
+          <button
+            type="button"
+            id="showSignupButton"
+            class="text-button"
+          >
+            Create account
+          </button>
+
+        </p>
+
+      </form>
+
+
+      <!-- SIGNUP -->
+
+      <form
+        id="signupForm"
+        class="auth-form hidden"
+      >
+
+        <h2>Create Admin Account</h2>
+
+        <p class="form-subtitle">
+          Register the authorized store administrator.
+        </p>
+
+
+        <div class="form-group">
+
+          <label for="signupFullName">
+            Full Name
+          </label>
+
+          <input
+            type="text"
+            id="signupFullName"
+            name="fullName"
+            placeholder="Enter your full name"
+            autocomplete="name"
+            required
+          />
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label for="signupEmail">
+            Email Address
+          </label>
+
+          <input
+            type="email"
+            id="signupEmail"
+            name="email"
+            placeholder="Enter your email"
+            autocomplete="email"
+            required
+          />
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label for="signupPassword">
+            Password
+          </label>
+
+          <input
+            type="password"
+            id="signupPassword"
+            name="password"
+            placeholder="Create a password"
+            autocomplete="new-password"
+            minlength="6"
+            required
+          />
+
+        </div>
+
+
+        <button
+          type="submit"
+          class="primary-button"
+        >
+          Create Account
+        </button>
+
+
+        <p
+          id="signupMessage"
+          class="form-message"
+        ></p>
+
+
+        <p class="auth-switch">
+
+          Already have an account?
+
+          <button
+            type="button"
+            id="showLoginButton"
+            class="text-button"
+          >
+            Login
+          </button>
+
+        </p>
+
+      </form>
+
+    </div>
+
+  </section>
+
+
+
+  <!-- =====================================================
+       DASHBOARD
+  ====================================================== -->
+
+  <section
+    id="dashboardSection"
+    class="dashboard-wrapper hidden"
+  >
+
+    <!-- DASHBOARD HEADER -->
+
+    <header class="dashboard-header">
+
+      <div>
+
+        <p class="eyebrow">
+          YEMS PERFUME
+        </p>
+
+        <h1>
+          Admin Dashboard
+        </h1>
+
+        <p class="dashboard-description">
+          Manage your products, inventory and delivery areas.
+        </p>
+
+      </div>
+
+
+      <button
+        id="logoutButton"
+        class="logout-button"
+        type="button"
+      >
+        Logout
+      </button>
+
+    </header>
+
+
+
+    <main class="dashboard-content">
+
+
+      <!-- =================================================
+           ADD / UPDATE PRODUCT
+      ================================================== -->
+
+      <section class="panel">
+
+        <div class="panel-heading">
+
+          <div>
+
+            <p class="eyebrow">
+              Inventory
+            </p>
+
+            <h2 id="formTitle">
+              Add New Product
+            </h2>
+
+          </div>
+
+        </div>
+
+
+        <form
+          id="productForm"
+          class="product-form"
+        >
+
+          <div class="form-grid">
+
+
+            <div class="form-group">
+
+              <label for="productName">
+                Product Name
+              </label>
+
+              <input
+                type="text"
+                id="productName"
+                placeholder="Example: Duren Signature"
+                required
+              />
+
+            </div>
+
+
+            <div class="form-group">
+
+              <label for="productCategory">
+                Category
+              </label>
+
+              <select
+                id="productCategory"
+                required
+              >
+
+                <option value="">
+                  Select category
+                </option>
+
+                <option value="Perfume">
+                  Perfume
+                </option>
+
+                <option value="Body Spray">
+                  Body Spray
+                </option>
+
+                <option value="Perfume Oil">
+                  Perfume Oil
+                </option>
+
+                <option value="Lip Gloss">
+                  Lip Gloss
+                </option>
+
+                <option value="Skincare">
+                  Skincare
+                </option>
+
+                <option value="Accessories">
+                  Accessories
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+              <label for="productPrice">
+                Price ₦
+              </label>
+
+              <input
+                type="number"
+                id="productPrice"
+                placeholder="Example: 15000"
+                min="0"
+                required
+              />
+
+            </div>
+
+
+            <div class="form-group">
+
+              <label for="productSize">
+                Size
+              </label>
+
+              <input
+                type="text"
+                id="productSize"
+                placeholder="Example: 50ml"
+              />
+
+            </div>
+
+
+            <div class="form-group">
+
+              <label for="productMl">
+                Millilitres
+              </label>
+
+              <input
+                type="number"
+                id="productMl"
+                placeholder="Example: 50"
+                min="0"
+              />
+
+            </div>
+
+
+            <div class="form-group">
+
+              <label for="productStock">
+                Stock
+              </label>
+
+              <input
+                type="number"
+                id="productStock"
+                placeholder="Example: 20"
+                min="0"
+                required
+              />
+
+            </div>
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label for="productImage">
+              Product Image
+            </label>
+
+            <input
+              type="file"
+              id="productImage"
+              accept="image/*"
+            />
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label for="productDescription">
+              Description
+            </label>
+
+            <textarea
+              id="productDescription"
+              rows="5"
+              placeholder="Describe the product..."
+            ></textarea>
+
+          </div>
+
+
+          <div class="form-actions">
+
+            <button
+              type="submit"
+              class="primary-button"
+            >
+              <span id="submitButtonText">
+                Add Product
+              </span>
+            </button>
+
+
+            <button
+              type="button"
+              id="cancelEditButton"
+              class="secondary-button hidden"
+            >
+              Cancel Edit
+            </button>
+
+          </div>
+
+
+          <p
+            id="productMessage"
+            class="form-message"
+          ></p>
+
+        </form>
+
+      </section>
+
+
+
+      <!-- =================================================
+           PRODUCT LIST
+      ================================================== -->
+
+      <section class="panel">
+
+        <div class="panel-heading panel-heading-row">
+
+          <div>
+
+            <p class="eyebrow">
+              Store Products
+            </p>
+
+            <h2>
+              Product List
+            </h2>
+
+          </div>
+
+
+          <button
+            type="button"
+            id="refreshProducts"
+            class="secondary-button"
+          >
+            Refresh
+          </button>
+
+        </div>
+
+
+        <div
+          id="productsList"
+          class="products-list"
+        >
+
+          <p class="empty-message">
+            Loading products...
+          </p>
+
+        </div>
+
+      </section>
+
+
+
+      <!-- =================================================
+           DELIVERY MANAGEMENT
+      ================================================== -->
+
+      <section class="panel">
+
+        <div class="panel-heading">
+
+          <div>
+
+            <p class="eyebrow">
+              Delivery
+            </p>
+
+            <h2 id="deliveryFormTitle">
+              Add Delivery Area
+            </h2>
+
+          </div>
+
+        </div>
+
+
+        <p class="form-subtitle">
+          Add the locations where YEMS delivers and set the
+          delivery fee yourself.
+        </p>
+
+
+        <form
+          id="deliveryForm"
+          class="product-form"
+        >
+
+          <div class="form-grid">
+
+
+            <!-- AREA NAME -->
+
+            <div class="form-group">
+
+              <label for="deliveryAreaName">
+                Area / Location
+              </label>
+
+              <input
+                type="text"
+                id="deliveryAreaName"
+                placeholder="Example: Ikeja"
+                required
+              />
+
+            </div>
+
+
+            <!-- STATE -->
+
+            <div class="form-group">
+
+              <label for="deliveryState">
+                State
+              </label>
+
+              <select
+                id="deliveryState"
+                required
+              >
+
+                <option value="">
+                  Select state
+                </option>
+
+                <option value="Abia">
+                  Abia
+                </option>
+
+                <option value="Adamawa">
+                  Adamawa
+                </option>
+
+                <option value="Akwa Ibom">
+                  Akwa Ibom
+                </option>
+
+                <option value="Anambra">
+                  Anambra
+                </option>
+
+                <option value="Bauchi">
+                  Bauchi
+                </option>
+
+                <option value="Bayelsa">
+                  Bayelsa
+                </option>
+
+                <option value="Benue">
+                  Benue
+                </option>
+
+                <option value="Borno">
+                  Borno
+                </option>
+
+                <option value="Cross River">
+                  Cross River
+                </option>
+
+                <option value="Delta">
+                  Delta
+                </option>
+
+                <option value="Ebonyi">
+                  Ebonyi
+                </option>
+
+                <option value="Edo">
+                  Edo
+                </option>
+
+                <option value="Ekiti">
+                  Ekiti
+                </option>
+
+                <option value="Enugu">
+                  Enugu
+                </option>
+
+                <option value="Gombe">
+                  Gombe
+                </option>
+
+                <option value="Imo">
+                  Imo
+                </option>
+
+                <option value="Jigawa">
+                  Jigawa
+                </option>
+
+                <option value="Kaduna">
+                  Kaduna
+                </option>
+
+                <option value="Kano">
+                  Kano
+                </option>
+
+                <option value="Katsina">
+                  Katsina
+                </option>
+
+                <option value="Kebbi">
+                  Kebbi
+                </option>
+
+                <option value="Kogi">
+                  Kogi
+                </option>
+
+                <option value="Kwara">
+                  Kwara
+                </option>
+
+                <option value="Lagos">
+                  Lagos
+                </option>
+
+                <option value="Nasarawa">
+                  Nasarawa
+                </option>
+
+                <option value="Niger">
+                  Niger
+                </option>
+
+                <option value="Ogun">
+                  Ogun
+                </option>
+
+                <option value="Ondo">
+                  Ondo
+                </option>
+
+                <option value="Osun">
+                  Osun
+                </option>
+
+                <option value="Oyo">
+                  Oyo
+                </option>
+
+                <option value="Plateau">
+                  Plateau
+                </option>
+
+                <option value="Rivers">
+                  Rivers
+                </option>
+
+                <option value="Sokoto">
+                  Sokoto
+                </option>
+
+                <option value="Taraba">
+                  Taraba
+                </option>
+
+                <option value="Yobe">
+                  Yobe
+                </option>
+
+                <option value="Zamfara">
+                  Zamfara
+                </option>
+
+                <option value="Federal Capital Territory">
+                  Federal Capital Territory
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <!-- DELIVERY FEE -->
+
+            <div class="form-group">
+
+              <label for="deliveryFee">
+                Delivery Fee ₦
+              </label>
+
+              <input
+                type="number"
+                id="deliveryFee"
+                placeholder="Example: 4500"
+                min="0"
+                required
+              />
+
+            </div>
+
+
+            <!-- LATITUDE -->
+
+            <div class="form-group">
+
+              <label for="deliveryLatitude">
+                Latitude
+              </label>
+
+              <input
+                type="number"
+                id="deliveryLatitude"
+                placeholder="Example: 6.6018"
+                step="any"
+                required
+              />
+
+            </div>
+
+
+            <!-- LONGITUDE -->
+
+            <div class="form-group">
+
+              <label for="deliveryLongitude">
+                Longitude
+              </label>
+
+              <input
+                type="number"
+                id="deliveryLongitude"
+                placeholder="Example: 3.3515"
+                step="any"
+                required
+              />
+
+            </div>
+
+
+            <!-- RADIUS -->
+
+            <div class="form-group">
+
+              <label for="deliveryRadius">
+                Coverage Radius (km)
+              </label>
+
+              <input
+                type="number"
+                id="deliveryRadius"
+                placeholder="Example: 5"
+                min="0.1"
+                step="0.1"
+                required
+              />
+
+            </div>
+
+
+            <!-- ACTIVE -->
+
+            <div class="form-group">
+
+              <label for="deliveryActive">
+                Status
+              </label>
+
+              <select
+                id="deliveryActive"
+              >
+
+                <option value="true">
+                  Active
+                </option>
+
+                <option value="false">
+                  Inactive
+                </option>
+
+              </select>
+
+            </div>
+
+          </div>
+
+
+          <div class="form-actions">
+
+            <button
+              type="submit"
+              class="primary-button"
+            >
+              <span id="deliverySubmitText">
+                Add Delivery Area
+              </span>
+            </button>
+
+
+            <button
+              type="button"
+              id="cancelDeliveryEditButton"
+              class="secondary-button hidden"
+            >
+              Cancel Edit
+            </button>
+
+          </div>
+
+
+          <p
+            id="deliveryMessage"
+            class="form-message"
+          ></p>
+
+        </form>
+
+      </section>
+
+
+
+      <!-- =================================================
+           DELIVERY AREA LIST
+      ================================================== -->
+
+      <section class="panel">
+
+        <div class="panel-heading panel-heading-row">
+
+          <div>
+
+            <p class="eyebrow">
+              Delivery Areas
+            </p>
+
+            <h2>
+              Active Service Locations
+            </h2>
+
+          </div>
+
+
+          <button
+            type="button"
+            id="refreshDeliveryAreas"
+            class="secondary-button"
+          >
+            Refresh
+          </button>
+
+        </div>
+
+
+        <div
+          id="deliveryAreasList"
+          class="products-list"
+        >
+
+          <p class="empty-message">
+            Loading delivery areas...
+          </p>
+
+        </div>
+
+      </section>
+
+    </main>
+
+  </section>
+
+
+  <script src="/js/admin.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,1683 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <meta
+    name="description"
+    content="YEMS PERFUME — Signature fragrances crafted to leave a lasting impression."
+  />
+
+  <title>
+    YEMS PERFUME | Leave a Scent They Remember
+  </title>
+
+
+  <!-- FONTS -->
+
+  <link
+    rel="preconnect"
+    href="https://fonts.googleapis.com"
+  />
+
+  <link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin
+  />
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+
+  <!-- ORIGINAL SHARED CSS -->
+
+  <link
+    rel="stylesheet"
+    href="/css/style.css"
+  />
+
+
+  <!-- =====================================================
+       HOMEPAGE-ONLY STYLES
+       These styles exist ONLY on index.html
+  ====================================================== -->
+
+  <style>
+
+    /* ===================================================
+       HOMEPAGE THEME
+    ==================================================== */
+
+    .home-page {
+      --home-bg: #e5dfd4;
+      --home-surface: #eee9df;
+      --home-text: #171614;
+      --home-muted: #756e64;
+      --home-line: rgba(23, 22, 20, 0.11);
+
+      background: var(--home-bg);
+      color: var(--home-text);
+
+      transition:
+        background-color 0.35s ease,
+        color 0.35s ease;
+    }
+
+
+    /* ===================================================
+       HERO
+    ==================================================== */
+
+    .home-page .hero {
+      position: relative;
+
+      min-height: 760px;
+
+      display: flex;
+      align-items: center;
+
+      padding:
+        90px
+        max(7vw, 75px);
+
+      overflow: hidden;
+
+      background:
+        #080807;
+
+      color: #f7f1e7;
+    }
+
+
+    /* FULL VIDEO */
+
+    .home-page .hero-visual {
+      position: absolute;
+
+      inset: 0;
+
+      width: 100%;
+      height: 100%;
+
+      z-index: 0;
+
+      display: block;
+
+      overflow: hidden;
+    }
+
+    .home-page .hero-product-video {
+      position: absolute;
+
+      inset: 0;
+
+      width: 100%;
+      height: 100%;
+
+      max-width: none;
+
+      object-fit: cover;
+
+      object-position: center;
+
+      background: #080807;
+    }
+
+
+    /* VIDEO DARKENING */
+
+    .home-page .hero-visual::after {
+      content: "";
+
+      position: absolute;
+
+      inset: 0;
+
+      z-index: 2;
+
+      background:
+        linear-gradient(
+          90deg,
+          rgba(8, 8, 7, 0.95) 0%,
+          rgba(8, 8, 7, 0.82) 25%,
+          rgba(8, 8, 7, 0.54) 47%,
+          rgba(8, 8, 7, 0.25) 70%,
+          rgba(8, 8, 7, 0.42) 100%
+        );
+
+      pointer-events: none;
+    }
+
+
+    /* HERO CONTENT ABOVE VIDEO */
+
+    .home-page .hero-content {
+      position: relative;
+
+      z-index: 5;
+
+      width: min(
+        600px,
+        100%
+      );
+    }
+
+
+    /* HERO RINGS */
+
+    .home-page .hero-ring {
+      position: absolute;
+
+      z-index: 3;
+
+      border:
+        1px solid
+        rgba(200, 163, 93, 0.10);
+
+      border-radius: 50%;
+
+      pointer-events: none;
+    }
+
+    .home-page .hero-ring-one {
+      width: 650px;
+      height: 650px;
+
+      right: -180px;
+      top: -110px;
+    }
+
+    .home-page .hero-ring-two {
+      width: 400px;
+      height: 400px;
+
+      right: 5px;
+      top: 75px;
+    }
+
+
+    /* HERO GLOW */
+
+    .home-page .hero-background-glow {
+      position: absolute;
+
+      z-index: 3;
+
+      width: 650px;
+      height: 650px;
+
+      right: 5%;
+      top: 50%;
+
+      transform:
+        translateY(-50%);
+
+      border-radius: 50%;
+
+      background:
+        radial-gradient(
+          circle,
+          rgba(200, 163, 93, 0.12),
+          transparent 66%
+        );
+
+      filter: blur(25px);
+
+      pointer-events: none;
+    }
+
+
+    /* HERO TEXT */
+
+    .home-page .hero-title {
+      color: #f7f1e7;
+    }
+
+    .home-page .hero-title span {
+      color: #e1c789;
+    }
+
+    .home-page .hero-text {
+      color: #aaa39a;
+    }
+
+
+    /* HIDE OLD CSS BOTTLE */
+
+    .home-page .hero-bottle,
+    .home-page .bottle-cap,
+    .home-page .bottle-neck,
+    .home-page .bottle-body,
+    .home-page .bottle-label,
+    .home-page .bottle-shadow,
+    .home-page .bottle-highlight,
+    .home-page .floating-note {
+      display: none !important;
+    }
+
+
+    /* ===================================================
+       THEME TOGGLE
+    ==================================================== */
+
+    .home-page .theme-toggle {
+      width: 78px;
+      height: 36px;
+
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      gap: 8px;
+
+      padding: 0 9px;
+
+      border:
+        1px solid
+        rgba(17, 17, 15, 0.20);
+
+      border-radius: 999px;
+
+      background:
+        rgba(255, 255, 255, 0.28);
+
+      color: #171614;
+
+      transition:
+        background 0.3s ease,
+        border-color 0.3s ease,
+        color 0.3s ease;
+    }
+
+    .home-page .theme-toggle:hover {
+      border-color:
+        rgba(200, 163, 93, 0.55);
+    }
+
+    .home-page .theme-icon {
+      font-size: 12px;
+      line-height: 1;
+    }
+
+    .home-page .theme-sun {
+      color: #c8a35d;
+    }
+
+    .home-page .theme-moon {
+      color: #81786c;
+    }
+
+    .home-page .theme-switch {
+      position: relative;
+
+      width: 29px;
+      height: 16px;
+
+      border-radius: 999px;
+
+      background: #c8a35d;
+    }
+
+    .home-page .theme-switch-knob {
+      position: absolute;
+
+      left: 2px;
+      top: 2px;
+
+      width: 12px;
+      height: 12px;
+
+      border-radius: 50%;
+
+      background: #11110f;
+
+      transition:
+        transform 0.3s ease;
+    }
+
+
+    /* ===================================================
+       DARK MODE
+    ==================================================== */
+
+    .home-page.dark-theme {
+      --home-bg: #0d0d0c;
+      --home-surface: #171614;
+      --home-text: #f3eee5;
+      --home-muted: #a29b91;
+      --home-line: rgba(228, 205, 150, 0.13);
+
+      background:
+        var(--home-bg);
+
+      color:
+        var(--home-text);
+    }
+
+
+    .home-page.dark-theme .header {
+      background:
+        rgba(13, 13, 12, 0.96);
+
+      border-bottom-color:
+        var(--home-line);
+    }
+
+    .home-page.dark-theme .nav a {
+      color:
+        #f3eee5;
+    }
+
+    .home-page.dark-theme .nav a:hover,
+    .home-page.dark-theme .nav a.active {
+      color:
+        #e1c789;
+    }
+
+    .home-page.dark-theme .cart-link {
+      color:
+        #f3eee5;
+    }
+
+    .home-page.dark-theme .collections {
+      background:
+        #0d0d0c;
+    }
+
+    .home-page.dark-theme .section-heading h2 {
+      color:
+        #f3eee5;
+    }
+
+    .home-page.dark-theme .featured {
+      background:
+        #171614;
+    }
+
+    .home-page.dark-theme .product-info h3 {
+      color:
+        #f3eee5;
+    }
+
+    .home-page.dark-theme .product-bottom {
+      color:
+        #a29b91;
+    }
+
+    .home-page.dark-theme .brand-statement {
+      background:
+        #080807;
+    }
+
+    .home-page.dark-theme .contact-cta {
+      background:
+        #c8a35d;
+
+      color:
+        #11110f;
+    }
+
+    .home-page.dark-theme .footer {
+      background:
+        #0d0d0c;
+
+      color:
+        #f3eee5;
+
+      border-top-color:
+        var(--home-line);
+    }
+
+    .home-page.dark-theme .footer-column a,
+    .home-page.dark-theme .footer-column p,
+    .home-page.dark-theme .footer-brand p {
+      color:
+        #938c82;
+    }
+
+
+    /* DARK TOGGLE */
+
+    .home-page.dark-theme .theme-toggle {
+      background:
+        rgba(255, 255, 255, 0.05);
+
+      border-color:
+        rgba(228, 205, 150, 0.20);
+
+      color:
+        #f3eee5;
+    }
+
+    .home-page.dark-theme .theme-sun {
+      color:
+        #6c665d;
+    }
+
+    .home-page.dark-theme .theme-moon {
+      color:
+        #e1c789;
+    }
+
+    .home-page.dark-theme .theme-switch-knob {
+      transform:
+        translateX(13px);
+    }
+
+
+    /* ===================================================
+       HOMEPAGE PRODUCT AREA
+    ==================================================== */
+
+    .home-page .featured {
+      background:
+        var(--home-surface);
+    }
+
+
+    /* ===================================================
+       CONTACT CTA
+    ==================================================== */
+
+    .home-page .contact-cta {
+      background:
+        #c8a35d;
+    }
+
+
+    /* ===================================================
+       MOBILE
+    ==================================================== */
+
+    @media (max-width: 700px) {
+
+      .home-page .hero {
+        min-height: 720px;
+
+        padding:
+          70px
+          22px
+          65px;
+
+        display: flex;
+
+        align-items:
+          flex-end;
+      }
+
+      .home-page .hero-visual {
+        position:
+          absolute;
+
+        inset: 0;
+
+        width: 100%;
+        height: 100%;
+      }
+
+      .home-page .hero-product-video {
+        width: 100%;
+        height: 100%;
+
+        object-fit: cover;
+
+        object-position: center;
+      }
+
+      .home-page .hero-visual::after {
+        background:
+          linear-gradient(
+            180deg,
+            rgba(8, 8, 7, 0.24) 0%,
+            rgba(8, 8, 7, 0.42) 32%,
+            rgba(8, 8, 7, 0.68) 58%,
+            rgba(8, 8, 7, 0.95) 100%
+          );
+      }
+
+      .home-page .hero-content {
+        width: 100%;
+      }
+
+      .home-page .theme-toggle {
+        width: 64px;
+        height: 32px;
+
+        gap: 6px;
+
+        padding: 0 7px;
+      }
+
+      .home-page .theme-switch {
+        width: 26px;
+        height: 15px;
+      }
+
+      .home-page .theme-switch-knob {
+        width: 11px;
+        height: 11px;
+      }
+
+      .home-page.dark-theme
+      .theme-switch-knob {
+        transform:
+          translateX(11px);
+      }
+
+    }
+
+
+    /* ===================================================
+       REDUCED MOTION
+    ==================================================== */
+
+    @media (
+      prefers-reduced-motion: reduce
+    ) {
+
+      .home-page *,
+      .home-page *::before,
+      .home-page *::after {
+        animation-duration:
+          0.01ms !important;
+
+        animation-iteration-count:
+          1 !important;
+
+        transition-duration:
+          0.01ms !important;
+      }
+
+    }
+
+  </style>
+
+</head>
+
+
+<body class="home-page">
+
+
+  <!-- =====================================================
+       SKIP LINK
+  ====================================================== -->
+
+  <a
+    href="#mainContent"
+    class="skip-link"
+  >
+    Skip to content
+  </a>
+
+
+
+  <!-- =====================================================
+       ANNOUNCEMENT
+  ====================================================== -->
+
+  <div class="announcement">
+
+    <div class="announcement-track">
+
+      <span>
+        Premium fragrances
+      </span>
+
+      <span class="announcement-dot">
+        ✦
+      </span>
+
+      <span>
+        Unforgettable impressions
+      </span>
+
+      <span class="announcement-dot">
+        ✦
+      </span>
+
+      <span>
+        Made to be remembered
+      </span>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- =====================================================
+       HEADER
+  ====================================================== -->
+
+  <header class="header">
+
+    <div class="header-inner">
+
+
+      <a
+        href="index.html"
+        class="logo"
+        aria-label="YEMS PERFUME Home"
+      >
+
+        <img
+          src="/images/yems-logo.png"
+          alt="YEMS PERFUME"
+          class="brand-logo"
+        />
+
+      </a>
+
+
+
+      <nav
+        class="nav"
+        id="nav"
+        aria-label="Main navigation"
+      >
+
+        <a
+          href="index.html"
+          class="active"
+        >
+          Home
+        </a>
+
+        <a href="shop.html">
+          Shop
+        </a>
+
+        <a href="#collections">
+          Collections
+        </a>
+
+        <a href="#contact">
+          Contact
+        </a>
+
+      </nav>
+
+
+
+      <div class="header-actions">
+
+
+        <button
+          type="button"
+          class="theme-toggle"
+          id="themeToggle"
+          aria-label="Toggle dark mode"
+          aria-pressed="false"
+        >
+
+          <span class="theme-icon theme-sun">
+            ☼
+          </span>
+
+          <span class="theme-switch">
+            <span class="theme-switch-knob"></span>
+          </span>
+
+          <span class="theme-icon theme-moon">
+            ☾
+          </span>
+
+        </button>
+
+
+
+        <a
+          href="cart.html"
+          class="cart-link"
+          aria-label="Shopping cart"
+        >
+
+          <span
+            class="cart-icon"
+            aria-hidden="true"
+          >
+            🛍
+          </span>
+
+          <span
+            class="cart-count"
+            id="cartCount"
+          >
+            0
+          </span>
+
+        </a>
+
+
+
+        <button
+          class="menu-btn"
+          id="menuBtn"
+          type="button"
+          aria-label="Open navigation menu"
+          aria-expanded="false"
+          aria-controls="nav"
+        >
+
+          <span></span>
+          <span></span>
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </header>
+
+
+
+  <!-- =====================================================
+       MAIN
+  ====================================================== -->
+
+  <main id="mainContent">
+
+
+    <!-- =================================================
+         HERO
+    ================================================== -->
+
+    <section class="hero">
+
+      <div class="hero-background-glow"></div>
+
+      <div class="hero-ring hero-ring-one"></div>
+
+      <div class="hero-ring hero-ring-two"></div>
+
+
+
+      <div class="hero-content reveal">
+
+        <p class="eyebrow hero-eyebrow">
+          THE ART OF FRAGRANCE
+        </p>
+
+
+        <h1 class="hero-title">
+
+          Leave a scent
+
+          <span>
+            they remember.
+          </span>
+
+        </h1>
+
+
+        <p class="hero-text">
+
+          Discover fragrances crafted to express your
+          personality, elevate your presence, and create
+          unforgettable impressions.
+
+        </p>
+
+
+        <div class="hero-buttons">
+
+          <a
+            href="shop.html"
+            class="btn btn-primary"
+          >
+
+            <span>
+              Explore collection
+            </span>
+
+            <span class="btn-arrow">
+              ↗
+            </span>
+
+          </a>
+
+
+          <a
+            href="#collections"
+            class="text-link"
+          >
+
+            <span>
+              Discover YEMS
+            </span>
+
+            <span class="text-link-arrow">
+              ↓
+            </span>
+
+          </a>
+
+        </div>
+
+
+        <div class="hero-detail">
+
+          <span class="hero-detail-line"></span>
+
+          <span>
+            SIGNATURE SCENTS
+          </span>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- DUREN VIDEO -->
+
+      <div class="hero-visual">
+
+        <video
+          class="hero-product-video"
+          autoplay
+          muted
+          loop
+          playsinline
+          preload="auto"
+          aria-label="DUREN Signature Perfume"
+        >
+
+          <source
+            src="/video/duren-hero.mp4"
+            type="video/mp4"
+          />
+
+          Your browser does not support video playback.
+
+        </video>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- =================================================
+         BRAND STRIP
+    ================================================== -->
+
+    <section class="brand-strip">
+
+      <div>
+        EXQUISITE SCENTS
+      </div>
+
+      <span>
+        ✦
+      </span>
+
+      <div>
+        TIMELESS PRESENCE
+      </div>
+
+      <span>
+        ✦
+      </span>
+
+      <div>
+        MADE TO BE REMEMBERED
+      </div>
+
+    </section>
+
+
+
+    <!-- =================================================
+         COLLECTIONS
+    ================================================== -->
+
+    <section
+      class="collections section"
+      id="collections"
+    >
+
+      <div class="section-heading reveal">
+
+        <div>
+
+          <p class="eyebrow">
+            SHOP BY COLLECTION
+          </p>
+
+          <h2>
+            Find your
+            <em>
+              signature.
+            </em>
+          </h2>
+
+        </div>
+
+
+        <a
+          href="shop.html"
+          class="outline-link"
+        >
+
+          <span>
+            View all products
+          </span>
+
+          <span>
+            ↗
+          </span>
+
+        </a>
+
+      </div>
+
+
+
+      <div class="collection-grid">
+
+
+        <a
+          href="shop.html?category=men"
+          class="collection-card collection-men reveal"
+        >
+
+          <img
+            src="/images/men-collection.jpg"
+            alt="YEMS fragrance collection for him"
+            class="collection-image"
+            loading="lazy"
+          />
+
+          <div class="collection-overlay"></div>
+
+          <div class="collection-shine"></div>
+
+
+          <div class="collection-info">
+
+            <p>
+              01 / COLLECTION
+            </p>
+
+            <h3>
+              For Him
+            </h3>
+
+            <span>
+              Explore fragrances
+              <b>↗</b>
+            </span>
+
+          </div>
+
+        </a>
+
+
+
+        <a
+          href="shop.html?category=women"
+          class="collection-card collection-women reveal"
+        >
+
+          <img
+            src="/images/women-collection.jpg"
+            alt="YEMS fragrance collection for her"
+            class="collection-image"
+            loading="lazy"
+          />
+
+          <div class="collection-overlay"></div>
+
+          <div class="collection-shine"></div>
+
+
+          <div class="collection-info">
+
+            <p>
+              02 / COLLECTION
+            </p>
+
+            <h3>
+              For Her
+            </h3>
+
+            <span>
+              Explore fragrances
+              <b>↗</b>
+            </span>
+
+          </div>
+
+        </a>
+
+
+
+        <a
+          href="shop.html?category=unisex"
+          class="collection-card collection-unisex reveal"
+        >
+
+          <img
+            src="/images/unisex-collection.jpg"
+            alt="YEMS unisex fragrance collection"
+            class="collection-image"
+            loading="lazy"
+          />
+
+          <div class="collection-overlay"></div>
+
+          <div class="collection-shine"></div>
+
+
+          <div class="collection-info">
+
+            <p>
+              03 / COLLECTION
+            </p>
+
+            <h3>
+              Unisex
+            </h3>
+
+            <span>
+              Explore fragrances
+              <b>↗</b>
+            </span>
+
+          </div>
+
+        </a>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- =================================================
+         FEATURED PRODUCTS
+    ================================================== -->
+
+    <section class="featured section">
+
+
+      <div class="section-heading reveal">
+
+        <div>
+
+          <p class="eyebrow">
+            OUR SELECTION
+          </p>
+
+          <h2>
+            Popular fragrances.
+          </h2>
+
+        </div>
+
+
+        <a
+          href="shop.html"
+          class="outline-link"
+        >
+
+          <span>
+            Shop all
+          </span>
+
+          <span>
+            ↗
+          </span>
+
+        </a>
+
+      </div>
+
+
+
+      <div
+        class="product-grid"
+        id="featuredProducts"
+      >
+
+        <article class="product-card reveal">
+
+          <div class="product-image">
+
+            <span class="product-badge">
+              Featured
+            </span>
+
+            <button
+              class="wishlist-btn"
+              type="button"
+              aria-label="Add Duren Signature to wishlist"
+            >
+              ♡
+            </button>
+
+            <img
+              src="/assets/product-1.jpg"
+              alt="Duren Signature Perfume"
+              loading="lazy"
+            />
+
+            <button
+              class="quick-add"
+              data-product="Duren Signature"
+              type="button"
+            >
+
+              <span>
+                Add to cart
+              </span>
+
+              <span>
+                +
+              </span>
+
+            </button>
+
+          </div>
+
+
+          <div class="product-info">
+
+            <p class="product-category">
+              YEMS SIGNATURE
+            </p>
+
+            <h3>
+              Duren Signature
+            </h3>
+
+            <div class="product-bottom">
+
+              <span>
+                From ₦15,000
+              </span>
+
+              <span class="product-arrow">
+                ↗
+              </span>
+
+            </div>
+
+          </div>
+
+        </article>
+
+
+
+        <article class="product-card reveal">
+
+          <div class="product-image">
+
+            <button
+              class="wishlist-btn"
+              type="button"
+              aria-label="Add Premium Collection to wishlist"
+            >
+              ♡
+            </button>
+
+            <img
+              src="/assets/product-2.jpg"
+              alt="Premium Collection perfume"
+              loading="lazy"
+            />
+
+            <button
+              class="quick-add"
+              data-product="Premium Collection"
+              type="button"
+            >
+
+              <span>
+                Add to cart
+              </span>
+
+              <span>
+                +
+              </span>
+
+            </button>
+
+          </div>
+
+
+          <div class="product-info">
+
+            <p class="product-category">
+              PREMIUM COLLECTION
+            </p>
+
+            <h3>
+              Premium Collection
+            </h3>
+
+            <div class="product-bottom">
+
+              <span>
+                From ₦18,000
+              </span>
+
+              <span class="product-arrow">
+                ↗
+              </span>
+
+            </div>
+
+          </div>
+
+        </article>
+
+
+
+        <article class="product-card reveal">
+
+          <div class="product-image">
+
+            <button
+              class="wishlist-btn"
+              type="button"
+              aria-label="Add Luxury Fragrance to wishlist"
+            >
+              ♡
+            </button>
+
+            <img
+              src="/assets/product-3.jpg"
+              alt="Luxury YEMS fragrance"
+              loading="lazy"
+            />
+
+            <button
+              class="quick-add"
+              data-product="Luxury Fragrance"
+              type="button"
+            >
+
+              <span>
+                Add to cart
+              </span>
+
+              <span>
+                +
+              </span>
+
+            </button>
+
+          </div>
+
+
+          <div class="product-info">
+
+            <p class="product-category">
+              LUXURY COLLECTION
+            </p>
+
+            <h3>
+              Luxury Fragrance
+            </h3>
+
+            <div class="product-bottom">
+
+              <span>
+                From ₦20,000
+              </span>
+
+              <span class="product-arrow">
+                ↗
+              </span>
+
+            </div>
+
+          </div>
+
+        </article>
+
+
+
+        <article class="product-card reveal">
+
+          <div class="product-image">
+
+            <span class="product-badge">
+              New
+            </span>
+
+            <button
+              class="wishlist-btn"
+              type="button"
+              aria-label="Add Everyday Scent to wishlist"
+            >
+              ♡
+            </button>
+
+            <img
+              src="/assets/product-4.jpg"
+              alt="Everyday YEMS fragrance"
+              loading="lazy"
+            />
+
+            <button
+              class="quick-add"
+              data-product="Everyday Scent"
+              type="button"
+            >
+
+              <span>
+                Add to cart
+              </span>
+
+              <span>
+                +
+              </span>
+
+            </button>
+
+          </div>
+
+
+          <div class="product-info">
+
+            <p class="product-category">
+              EVERYDAY COLLECTION
+            </p>
+
+            <h3>
+              Everyday Scent
+            </h3>
+
+            <div class="product-bottom">
+
+              <span>
+                From ₦12,000
+              </span>
+
+              <span class="product-arrow">
+                ↗
+              </span>
+
+            </div>
+
+          </div>
+
+        </article>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- =================================================
+         BRAND STATEMENT
+    ================================================== -->
+
+    <section class="brand-statement">
+
+      <div class="brand-statement-inner reveal">
+
+        <p class="eyebrow">
+          THE YEMS EXPERIENCE
+        </p>
+
+        <h2>
+
+          We cook the smell
+
+          <br />
+
+          and you
+
+          <em>
+            spread it.
+          </em>
+
+        </h2>
+
+        <p class="brand-statement-text">
+
+          A scent is more than a fragrance.
+          It becomes part of the way people remember you.
+
+        </p>
+
+        <a
+          href="shop.html"
+          class="btn btn-gold"
+        >
+
+          <span>
+            Shop the scent
+          </span>
+
+          <span>
+            ↗
+          </span>
+
+        </a>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- =================================================
+         CONTACT CTA
+    ================================================== -->
+
+    <section class="contact-cta">
+
+      <div class="contact-cta-inner reveal">
+
+        <div>
+
+          <p class="eyebrow">
+            NEED HELP CHOOSING?
+          </p>
+
+          <h2>
+            Let's find your scent.
+          </h2>
+
+        </div>
+
+
+        <a
+          href="https://wa.me/2349036456992"
+          class="contact-cta-link"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+
+          <span>
+            Chat with YEMS
+          </span>
+
+          <span>
+            ↗
+          </span>
+
+        </a>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+
+  <!-- =====================================================
+       FOOTER
+  ====================================================== -->
+
+  <footer
+    class="footer"
+    id="contact"
+  >
+
+    <div class="footer-top">
+
+
+      <div class="footer-brand">
+
+        <a
+          href="index.html"
+          class="footer-logo-link"
+        >
+
+          <img
+            src="/images/yems-logo.png"
+            alt="YEMS PERFUME"
+            class="brand-logo"
+          />
+
+        </a>
+
+
+        <p>
+          We cook the smell and you spread it.
+        </p>
+
+
+        <a
+          href="https://wa.me/2349036456992"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="footer-contact-link"
+        >
+          Chat with us ↗
+        </a>
+
+      </div>
+
+
+
+      <div class="footer-column">
+
+        <h4>
+          Explore
+        </h4>
+
+        <a href="index.html">
+          Home
+        </a>
+
+        <a href="shop.html">
+          Shop
+        </a>
+
+        <a href="#collections">
+          Collections
+        </a>
+
+        <a href="cart.html">
+          Cart
+        </a>
+
+      </div>
+
+
+
+      <div class="footer-column">
+
+        <h4>
+          Follow us
+        </h4>
+
+        <a
+          href="https://www.instagram.com/yemsperfume/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Instagram ↗
+        </a>
+
+        <a
+          href="https://www.tiktok.com/@yemsperfume"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          TikTok ↗
+        </a>
+
+        <a
+          href="https://wa.me/2349036456992"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          WhatsApp ↗
+        </a>
+
+      </div>
+
+
+
+      <div class="footer-column">
+
+        <h4>
+          Contact
+        </h4>
+
+        <a
+          href="https://wa.me/2349036456992"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          09036456992
+        </a>
+
+        <p>
+          Available for enquiries,
+          orders and fragrance guidance.
+        </p>
+
+      </div>
+
+    </div>
+
+
+
+    <div class="footer-bottom">
+
+      <p>
+        © 2026 YEMS PERFUME.
+        All rights reserved.
+      </p>
+
+      <p>
+        Crafted with intention.
+      </p>
+
+    </div>
+
+  </footer>
+
+
+
+  <!-- =====================================================
+       JAVASCRIPT
+  ====================================================== -->
+
+  <script src="/js/script.js"></script>
+
+</body>
+
+</html>

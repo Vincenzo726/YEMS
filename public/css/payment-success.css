@@ -1,197 +1,476 @@
-/* =========================================
-   YEMS PERFUME - PAYMENT RESULT
-========================================= */
+/* =====================================================
+   YEMS PAYMENT SUCCESS PAGE
+===================================================== */
 
-.payment-result-page {
-  min-height: 100vh;
-
-  display: grid;
-  place-items: center;
-
-  padding: 40px 20px;
-
-  background: #f7f5f0;
+.payment-success-page {
+  min-height: calc(100vh - 180px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 1.25rem;
 }
 
-.payment-result-card {
-  width: min(560px, 100%);
 
-  padding: 55px 40px;
-
-  text-align: center;
-
+.success-card {
+  width: min(100%, 760px);
+  margin: 0 auto;
+  padding: 3rem;
+  border-radius: 24px;
   border: 1px solid rgba(0, 0, 0, 0.08);
-
-  background: #fff;
-
+  background: rgba(255, 255, 255, 0.96);
   box-shadow:
-    0 20px 60px rgba(0, 0, 0, 0.06);
+    0 20px 60px rgba(0, 0, 0, 0.08);
+  text-align: center;
 }
 
-.payment-result-icon {
+
+/* =====================================================
+   SUCCESS ICON
+===================================================== */
+
+.success-icon {
   width: 72px;
   height: 72px;
+  margin: 0 auto 1.5rem;
 
-  display: grid;
-  place-items: center;
-
-  margin: 0 auto 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   border-radius: 50%;
 
   background: #111;
   color: #fff;
 
-  font-size: 30px;
+  font-size: 2rem;
   font-weight: 700;
 }
 
-.payment-result-card.success
-.payment-result-icon {
-  background: #111;
-}
 
-.payment-result-card.error
-.payment-result-icon {
-  background: #8f2020;
-}
+/* =====================================================
+   HEADING
+===================================================== */
 
-.payment-result-eyebrow {
-  margin: 0 0 10px;
-
-  font-size: 11px;
-  letter-spacing: 2px;
-  font-weight: 700;
-}
-
-.payment-result-card h1 {
-  margin: 0 0 14px;
-
-  font-size: clamp(30px, 5vw, 44px);
-
-  line-height: 1.1;
-}
-
-.payment-result-text {
-  max-width: 430px;
-
+.success-heading {
+  max-width: 620px;
   margin: 0 auto;
+}
 
-  color: #666;
 
-  font-size: 14px;
+.success-heading .eyebrow {
+  margin: 0 0 0.75rem;
+
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+
+  opacity: 0.58;
+}
+
+
+.success-heading h1 {
+  margin: 0;
+
+  font-size: clamp(
+    2.3rem,
+    6vw,
+    4rem
+  );
+
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+}
+
+
+.success-message {
+  margin: 1rem auto 0;
+
+  max-width: 540px;
+
+  font-size: 1rem;
   line-height: 1.7;
+
+  opacity: 0.68;
 }
 
 
-/* =========================================
+/* =====================================================
    ORDER DETAILS
-========================================= */
+===================================================== */
 
-.payment-order-details {
-  display: grid;
+.order-details {
+  margin-top: 2.25rem;
 
-  grid-template-columns: 1fr 1fr;
+  border-top: 1px solid
+    rgba(0, 0, 0, 0.08);
 
-  gap: 12px;
-
-  margin: 30px 0;
+  border-bottom: 1px solid
+    rgba(0, 0, 0, 0.08);
 }
 
-.payment-order-details div {
-  padding: 16px;
 
-  border: 1px solid #e2e2e2;
+.detail-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+
+  padding: 1.1rem 0;
 
   text-align: left;
 }
 
-.payment-order-details span {
-  display: block;
 
-  margin-bottom: 7px;
-
-  color: #777;
-
-  font-size: 11px;
-}
-
-.payment-order-details strong {
-  display: block;
-
-  color: #111;
-
-  font-size: 13px;
-
-  word-break: break-word;
+.detail-row + .detail-row {
+  border-top: 1px solid
+    rgba(0, 0, 0, 0.06);
 }
 
 
-/* =========================================
-   ACTIONS
-========================================= */
+.detail-label {
+  font-size: 0.9rem;
+  opacity: 0.58;
+}
 
-.success-action {
-  width: 100%;
 
+.detail-value {
+  font-size: 0.95rem;
+  text-align: right;
+}
+
+
+.detail-value.amount {
+  font-size: 1.15rem;
+}
+
+
+/* =====================================================
+   PICKUP DETAILS
+===================================================== */
+
+.pickup-details {
+  display: none;
+
+  margin-top: 2rem;
+
+  padding: 1.5rem;
+
+  border-radius: 18px;
+
+  background: #f8f6f1;
+
+  border: 1px solid
+    rgba(0, 0, 0, 0.08);
+
+  text-align: left;
+}
+
+
+.pickup-details.is-visible {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+
+.pickup-icon {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 12px;
+
+  background: #111;
+  color: #fff;
+
+  font-size: 1.15rem;
+}
+
+
+.pickup-content {
+  flex: 1;
+}
+
+
+.pickup-eyebrow {
+  margin: 0 0 0.45rem;
+
+  font-size: 0.72rem;
+  font-weight: 700;
+
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+
+  opacity: 0.55;
+}
+
+
+.pickup-content h2 {
+  margin: 0;
+
+  font-size: 1.35rem;
+  line-height: 1.2;
+}
+
+
+.pickup-intro {
+  margin: 0.65rem 0 1.25rem;
+
+  font-size: 0.92rem;
+  line-height: 1.6;
+
+  opacity: 0.68;
+}
+
+
+.pickup-info-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+
+.pickup-info-box {
+  padding: 1rem;
+
+  border-radius: 12px;
+
+  background: rgba(255, 255, 255, 0.72);
+
+  border: 1px solid
+    rgba(0, 0, 0, 0.07);
+}
+
+
+.pickup-label {
   display: block;
 
-  box-sizing: border-box;
+  margin-bottom: 0.45rem;
 
-  padding: 15px 20px;
+  font-size: 0.7rem;
+  font-weight: 700;
 
-  margin-top: 12px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+
+  opacity: 0.52;
+}
+
+
+.pickup-address {
+  display: block;
+
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+
+.pickup-phone {
+  display: inline-block;
+
+  color: inherit;
+
+  font-size: 1rem;
+  font-weight: 700;
+
+  text-decoration: none;
+}
+
+
+.pickup-phone:hover {
+  text-decoration: underline;
+}
+
+
+/* =====================================================
+   BUTTONS
+===================================================== */
+
+.success-actions {
+  display: flex;
+  justify-content: center;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+
+  margin-top: 2rem;
+}
+
+
+.success-button {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  min-height: 48px;
+
+  padding: 0.85rem 1.35rem;
+
+  border-radius: 10px;
 
   text-decoration: none;
 
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 0.9rem;
+  font-weight: 700;
 
   transition:
-    opacity 0.2s ease,
-    transform 0.2s ease;
+    transform 0.2s ease,
+    opacity 0.2s ease;
 }
 
-.success-action:hover {
-  opacity: 0.9;
+
+.success-button:hover {
   transform: translateY(-1px);
 }
 
-.whatsapp-action {
+
+.success-button.primary {
   background: #111;
   color: #fff;
 }
 
-.home-action {
-  border: 1px solid #ddd;
 
-  background: #fff;
+.success-button.secondary {
+  background: transparent;
+  color: inherit;
 
+  border: 1px solid
+    rgba(0, 0, 0, 0.14);
+}
+
+
+.success-footer {
+  padding: 1.5rem 1.25rem 2rem;
+
+  text-align: center;
+
+  font-size: 0.78rem;
+
+  opacity: 0.55;
+}
+
+
+/* =====================================================
+   DARK THEME
+===================================================== */
+
+.dark-theme .success-card {
+  background: #151515;
+
+  border-color:
+    rgba(255, 255, 255, 0.08);
+
+  box-shadow:
+    0 20px 60px
+      rgba(0, 0, 0, 0.32);
+}
+
+
+.dark-theme .success-icon {
+  background: #f1e2c3;
   color: #111;
 }
 
 
-/* =========================================
-   UTILITY
-========================================= */
-
-.hidden {
-  display: none !important;
+.dark-theme .order-details {
+  border-color:
+    rgba(255, 255, 255, 0.1);
 }
 
 
-/* =========================================
+.dark-theme .detail-row + .detail-row {
+  border-color:
+    rgba(255, 255, 255, 0.07);
+}
+
+
+.dark-theme .pickup-details {
+  background: #1d1d1d;
+
+  border-color:
+    rgba(255, 255, 255, 0.08);
+}
+
+
+.dark-theme .pickup-icon {
+  background: #f1e2c3;
+  color: #111;
+}
+
+
+.dark-theme .pickup-info-box {
+  background: #171717;
+
+  border-color:
+    rgba(255, 255, 255, 0.08);
+}
+
+
+.dark-theme .success-button.primary {
+  background: #f1e2c3;
+  color: #111;
+}
+
+
+.dark-theme .success-button.secondary {
+  border-color:
+    rgba(255, 255, 255, 0.14);
+}
+
+
+/* =====================================================
    MOBILE
-========================================= */
+===================================================== */
 
-@media (max-width: 600px) {
+@media (max-width: 700px) {
 
-  .payment-result-card {
-    padding: 40px 22px;
+  .payment-success-page {
+    padding: 2.25rem 1rem;
   }
 
-  .payment-order-details {
+
+  .success-card {
+    padding: 2rem 1.15rem;
+
+    border-radius: 18px;
+  }
+
+
+  .detail-row {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+
+  .detail-value {
+    text-align: left;
+  }
+
+
+  .pickup-details.is-visible {
+    flex-direction: column;
+  }
+
+
+  .pickup-info-grid {
     grid-template-columns: 1fr;
+  }
+
+
+  .success-actions {
+    flex-direction: column;
+  }
+
+
+  .success-button {
+    width: 100%;
   }
 
 }

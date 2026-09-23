@@ -134,31 +134,29 @@ function readCart() {
    LOAD PRODUCTS
 ===================================================== */
 
-async function loadProducts() {
 
+ async function loadProducts() {
   try {
-
     const response =
       await fetch(
-        PRODUCTS_API
+        PRODUCTS_API,
+        {
+          cache: "no-store"
+        }
       );
 
     const result =
       await response.json();
 
-
     if (
       !response.ok ||
       result.success === false
     ) {
-
       throw new Error(
         result.message ||
-        "Unable to load products."
+          "Unable to load products."
       );
-
     }
-
 
     products =
       Array.isArray(result)
@@ -173,27 +171,49 @@ async function loadProducts() {
               : []
           );
 
+    // =================================================
+    // REMOVE OLD / DELETED PRODUCTS FROM CART
+    // =================================================
+
+    const validProductIds =
+      new Set(
+        products.map(
+          (product) =>
+            String(product._id)
+        )
+      );
+
+    cart =
+      cart.filter(
+        (cartItem) =>
+          validProductIds.has(
+            String(
+              cartItem.productId
+            )
+          )
+      );
+
+    // Save the cleaned cart.
+    localStorage.setItem(
+      "yemsCart",
+      JSON.stringify(cart)
+    );
 
     renderCheckout();
 
   } catch (error) {
-
     console.error(
       "Checkout product load error:",
       error
     );
 
-
     if (checkoutItems) {
-
       checkoutItems.innerHTML = `
         <p class="empty-checkout">
           Unable to load your order.
         </p>
       `;
-
     }
-
 
     updateTotals();
 
@@ -201,11 +221,8 @@ async function loadProducts() {
       "Unable to load your order. Please refresh and try again.",
       "error"
     );
-
   }
-
 }
-
 
 /* =====================================================
    FULFILMENT
@@ -592,7 +609,38 @@ async function handleCheckoutSubmit(
 
     return;
   }
+      const validCart =
+  cart.filter((cartItem) =>
+    products.some(
+      (product) =>
+        String(product._id) ===
+        String(cartItem.productId)
+    )
+  );
 
+if (!validCart.length) {
+  localStorage.removeItem(
+    "yemsCart"
+  );
+
+  cart = [];
+
+  renderCheckout();
+
+  showCheckoutMessage(
+    "Your cart was refreshed because one or more products were no longer available.",
+    "error"
+  );
+
+  return;
+}
+
+cart = validCart;
+
+localStorage.setItem(
+  "yemsCart",
+  JSON.stringify(cart)
+);
 
   const formData =
     new FormData(

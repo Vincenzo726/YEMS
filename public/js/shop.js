@@ -9,40 +9,80 @@ let cart = JSON.parse(localStorage.getItem("yemsCart")) || [];
 // ===============================
 // LOAD PRODUCTS FROM BACKEND
 // ===============================
-
-async function loadProducts() {
+  async function loadProducts() {
   if (!productGrid) return;
 
   productGrid.classList.add("loading");
 
   try {
-    const response = await fetch("/products");
-    const result = await response.json();
+    const response = await fetch(
+      "/products",
+      {
+        cache: "no-store"
+      }
+    );
 
-    if (!response.ok || !result.success) {
+    const result =
+      await response.json();
+
+    if (
+      !response.ok ||
+      !result.success
+    ) {
       throw new Error(
-        result.message || "Failed to load products"
+        result.message ||
+          "Failed to load products"
       );
     }
 
-    products = result.products || [];
+    products =
+      result.products || [];
+
+    // Remove products from the local cart
+    // that no longer exist in the database.
+    const validProductIds =
+      new Set(
+        products.map(
+          (product) =>
+            String(product._id)
+        )
+      );
+
+    cart =
+      cart.filter(
+        (item) =>
+          validProductIds.has(
+            String(item.productId)
+          )
+      );
+
+    localStorage.setItem(
+      "yemsCart",
+      JSON.stringify(cart)
+    );
 
     renderProducts(products);
+
     updateCartCount();
 
   } catch (error) {
-    console.error("Error loading products:", error);
+    console.error(
+      "Error loading products:",
+      error
+    );
 
     productGrid.innerHTML = `
       <p class="empty-message">
         Unable to load products right now.
       </p>
     `;
+
   } finally {
-    productGrid.classList.remove("loading");
+    productGrid.classList.remove(
+      "loading"
+    );
   }
 }
-
 
 // ===============================
 // RENDER PRODUCTS

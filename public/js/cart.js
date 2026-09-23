@@ -21,18 +21,26 @@ let cart =
 // LOAD PRODUCTS
 // ===============================
 
-async function loadCart() {
+ async function loadCart() {
   try {
     const response =
-      await fetch(PRODUCTS_API);
+      await fetch(
+        PRODUCTS_API,
+        {
+          cache: "no-store"
+        }
+      );
 
     const result =
       await response.json();
 
-    if (!response.ok || !result.success) {
+    if (
+      !response.ok ||
+      !result.success
+    ) {
       throw new Error(
         result.message ||
-        "Unable to fetch products"
+          "Unable to fetch products"
       );
     }
 
@@ -41,6 +49,30 @@ async function loadCart() {
       result.data?.products ||
       result.data ||
       [];
+
+    // IMPORTANT:
+    // Remove stale/deleted product IDs
+    // from the actual saved cart.
+    const validProductIds =
+      new Set(
+        products.map(
+          (product) =>
+            String(product._id)
+        )
+      );
+
+    cart =
+      cart.filter(
+        (item) =>
+          validProductIds.has(
+            String(item.productId)
+          )
+      );
+
+    localStorage.setItem(
+      "yemsCart",
+      JSON.stringify(cart)
+    );
 
     renderCart();
 
@@ -54,9 +86,11 @@ async function loadCart() {
       cartItemsContainer.innerHTML = `
         <div class="empty-cart">
           <h2>Unable to load cart.</h2>
+
           <p>
             We couldn't load your products right now.
           </p>
+
           <a href="shop.html">
             Return to shop
           </a>
@@ -65,7 +99,6 @@ async function loadCart() {
     }
   }
 }
-
 
 // ===============================
 // RENDER CART

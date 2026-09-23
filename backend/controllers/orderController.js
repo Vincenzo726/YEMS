@@ -37,17 +37,18 @@ const generateOrderReference = () => {
 // =====================================================
 // DELIVERY FEE
 // =====================================================
+//
+// YEMS does NOT collect delivery fees through Paystack
+// at checkout right now.
+//
+// Delivery arrangements and the delivery fee are handled
+// separately with the customer on WhatsApp.
+//
+// Therefore, the amount sent to Paystack is ONLY the
+// product subtotal.
 
-const getDeliveryFee = (state) => {
-  const deliveryFees = {
-    Lagos: 3000,
-    Abuja: 4000,
-    Oyo: 2500,
-    Ogun: 3000,
-    Ekiti: 2000,
-  };
-
-  return deliveryFees[state] ?? 3500;
+const getDeliveryFee = () => {
+  return 0;
 };
 
 
@@ -204,13 +205,12 @@ const buildOrderData = async ({
   // Delivery + total
   // -----------------------------------------------
 
-  const deliveryFee =
-    getDeliveryFee(
-      customer.state
-    );
+  // Delivery is arranged separately on WhatsApp.
+  // Do NOT include it in the Paystack payment.
+  const deliveryFee = 0;
 
   const total =
-    subtotal + deliveryFee;
+    subtotal;
 
 
   return {
@@ -443,8 +443,10 @@ const initializePayment = async (
     // For NGN: naira × 100
     // -----------------------------------------------
 
+    // Paystack charges ONLY the product subtotal.
+    // Delivery fee is agreed separately on WhatsApp.
     const amountInKobo =
-      Math.round(total * 100);
+      Math.round(subtotal * 100);
 
 
     // -----------------------------------------------

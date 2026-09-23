@@ -170,6 +170,111 @@ const ordersMessage =
     "ordersMessage"
   );
   
+
+// =====================================================
+// ADMIN THEME TOGGLE
+// =====================================================
+function initThemeToggle() {
+  const savedTheme =
+    localStorage.getItem("yemsAdminTheme") === "dark"
+      ? "dark"
+      : "light";
+
+  document.body.dataset.theme = savedTheme;
+
+  const header =
+    document.querySelector(".dashboard-header");
+
+  if (!header || !logoutButton) {
+    return;
+  }
+
+  let actions =
+    header.querySelector(".dashboard-header-actions");
+
+  if (!actions) {
+    actions = document.createElement("div");
+    actions.className =
+      "dashboard-header-actions";
+
+    header.appendChild(actions);
+  }
+
+  if (
+    logoutButton.parentElement !==
+    actions
+  ) {
+    actions.appendChild(logoutButton);
+  }
+
+  let toggle =
+    document.getElementById("themeToggle");
+
+  if (!toggle) {
+    toggle = document.createElement("button");
+
+    toggle.type = "button";
+    toggle.id = "themeToggle";
+    toggle.className = "theme-toggle";
+
+    toggle.setAttribute(
+      "aria-label",
+      "Toggle admin dashboard theme"
+    );
+
+    actions.insertBefore(
+      toggle,
+      logoutButton
+    );
+
+    toggle.addEventListener(
+      "click",
+      () => {
+        const nextTheme =
+          document.body.dataset.theme === "dark"
+            ? "light"
+            : "dark";
+
+        document.body.dataset.theme =
+          nextTheme;
+
+        localStorage.setItem(
+          "yemsAdminTheme",
+          nextTheme
+        );
+
+        updateThemeToggle();
+      }
+    );
+  }
+
+  updateThemeToggle();
+}
+
+function updateThemeToggle() {
+  const toggle =
+    document.getElementById(
+      "themeToggle"
+    );
+
+  if (!toggle) {
+    return;
+  }
+
+  const isDark =
+    document.body.dataset.theme ===
+    "dark";
+
+  toggle.innerHTML = isDark
+    ? `<span class="theme-toggle-icon">☀</span><span>Light</span>`
+    : `<span class="theme-toggle-icon">☾</span><span>Dark</span>`;
+
+  toggle.setAttribute(
+    "aria-pressed",
+    String(isDark)
+  );
+}
+
 // =====================================================
 // PAGE STARTUP
 // =====================================================
@@ -177,6 +282,8 @@ const ordersMessage =
 document.addEventListener(
   "DOMContentLoaded",
   () => {
+
+    initThemeToggle();
 
     const token =
       localStorage.getItem(
@@ -190,6 +297,8 @@ document.addEventListener(
       loadProducts();
 
       loadDeliveryAreas();
+
+      loadOrders();
 
     } else {
 
@@ -473,6 +582,8 @@ if (loginForm) {
         loadProducts();
 
         loadDeliveryAreas();
+
+        loadOrders();
 
       } catch (error) {
 
@@ -2051,6 +2162,1080 @@ if (
     loadDeliveryAreas
   );
 
+}
+
+
+// =====================================================
+// LOAD ORDERS
+// =====================================================
+async function loadOrders() {
+
+  if (!ordersList) {
+    return;
+  }
+
+  const token =
+    localStorage.getItem(
+      "yemsAdminToken"
+    );
+
+  if (!token) {
+    showLogin();
+    return;
+  }
+
+  ordersList.innerHTML = `
+    <p class="empty-message">
+      Loading orders...
+    </p>
+  `;
+
+  clearMessage(
+    ordersMessage
+  );
+
+  try {
+
+    const params =
+      new URLSearchParams();
+
+    const search =
+      orderSearch
+        ? orderSearch.value.trim()
+        : "";
+
+    const deliveryMethod =
+      orderMethodFilter
+        ? orderMethodFilter.value
+        : "";
+
+    const orderStatus =
+      orderStatusFilter
+        ? orderStatusFilter.value
+        : "";
+
+    const paymentStatus =
+      orderPaymentFilter
+        ? orderPaymentFilter.value
+        : "";
+
+    if (search) {
+      params.set(
+        "search",
+        search
+      );
+    }
+
+    if (deliveryMethod) {
+      params.set(
+        "deliveryMethod",
+        deliveryMethod
+      );
+    }
+
+    if (orderStatus) {
+      params.set(
+        "orderStatus",
+        orderStatus
+      );
+    }
+
+    if (paymentStatus) {
+      params.set(
+        "paymentStatus",
+        paymentStatus
+      );
+    }
+
+    const query =
+      params.toString();
+
+    const response =
+      await fetch(
+        query
+          ? `/orders?${query}`
+          : "/orders",
+        {
+          headers: {
+            Authorization:
+              `Bearer ${token}`
+          }
+        }
+      );
+
+    const data =
+      await response.json();
+
+    if (
+      response.status === 401 ||
+      response.status === 403
+    ) {
+
+      localStorage.removeItem(
+        "yemsAdminToken"
+      );
+
+      showLogin();
+
+      throw new Error(
+        "Your admin session has expired. Please login again."
+      );
+    }
+
+    if (!response.ok) {
+      throw new Error(
+        data.message ||
+          "Unable to load orders."
+      );
+    }
+
+    currentOrders =
+      data.data?.orders ||
+      data.orders ||
+      [];
+
+    displayOrders(
+      currentOrders
+    );
+
+  } catch (error) {
+
+    console.error(
+      "Load orders error:",
+      error
+    );
+
+    ordersList.innerHTML = `
+      <p class="empty-message error">
+        ${escapeHTML(
+          error.message ||
+            "Unable to load orders."
+        )}
+      </p>
+    `;
+
+    showMessage(
+      ordersMessage,
+      error.message ||
+        "Unable to load orders.",
+      "error"
+    );
+  }
+}
+
+
+// =====================================================
+// DISPLAY ORDERS
+// =====================================================
+function displayOrders(
+  orders
+) {
+
+  if (!ordersList) {
+    return;
+  }
+
+  if (
+    !Array.isArray(orders) ||
+    orders.length === 0
+  ) {
+
+    ordersList.innerHTML = `
+      <p class="empty-message">
+        No orders found.
+      </p>
+    `;
+
+    return;
+  }
+
+  ordersList.innerHTML =
+    orders
+      .map(
+        renderOrderCard
+      )
+      .join("");
+}
+
+
+// =====================================================
+// RENDER ORDER CARD
+// =====================================================
+function renderOrderCard(
+  order
+) {
+
+  const customer =
+    order.customer || {};
+
+  const items =
+    Array.isArray(order.items)
+      ? order.items
+      : [];
+
+  const deliveryMethod =
+    order.deliveryMethod ||
+    "delivery";
+
+  const orderStatus =
+    order.orderStatus ||
+    "pending";
+
+  const paymentStatus =
+    order.paymentStatus ||
+    "pending";
+
+  const orderReference =
+    order.orderReference ||
+    "No reference";
+
+  const orderDatabaseId =
+    order._id ||
+    "Not available";
+
+  const createdAt =
+    order.createdAt
+      ? formatOrderDate(
+          order.createdAt
+        )
+      : "Date unavailable";
+
+  const deliveryAreaName =
+    order.deliveryArea?.name ||
+    order.deliveryArea?.areaId?.name ||
+    "Not provided";
+
+  const deliveryAddress =
+    order.deliveryLocation?.formattedAddress ||
+    customer.address ||
+    "Not provided";
+
+  const subtotal =
+    Number(
+      order.subtotal || 0
+    );
+
+  const deliveryFee =
+    Number(
+      order.deliveryFee || 0
+    );
+
+  const total =
+    Number(
+      order.total ??
+        subtotal +
+          deliveryFee
+    );
+
+  const paymentReference =
+    order.paystackReference ||
+    "Not available";
+
+  return `
+    <article
+      class="product-card order-card"
+      style="
+        overflow:hidden;
+        border:1px solid rgba(0,0,0,0.08);
+      "
+    >
+
+      <div
+        class="product-card-content"
+        style="width:100%;"
+      >
+
+        <!-- ORDER TYPE + PAYMENT -->
+        <div
+          class="product-card-top"
+          style="
+            gap:10px;
+            align-items:center;
+            flex-wrap:wrap;
+          "
+        >
+
+          <span
+            class="product-category"
+            style="
+              font-weight:700;
+              letter-spacing:0.06em;
+            "
+          >
+            ${escapeHTML(
+              deliveryMethod ===
+                "pickup"
+                ? "PICKUP ORDER"
+                : "DELIVERY ORDER"
+            )}
+          </span>
+
+          <span
+            class="stock-badge ${
+              paymentStatus === "paid"
+                ? "in-stock"
+                : "out-stock"
+            }"
+          >
+            ${escapeHTML(
+              formatPaymentStatus(
+                paymentStatus
+              )
+            )}
+          </span>
+
+        </div>
+
+
+        <!-- CUSTOMER ORDER REFERENCE -->
+        <div
+          style="
+            margin:12px 0 18px;
+            padding:16px;
+            border-radius:14px;
+            background:rgba(0,0,0,0.035);
+            border:1px solid rgba(0,0,0,0.08);
+          "
+        >
+
+          <div
+            style="
+              font-size:11px;
+              font-weight:700;
+              letter-spacing:0.1em;
+              text-transform:uppercase;
+              opacity:0.65;
+              margin-bottom:7px;
+            "
+          >
+            Order ID / Collection Code
+          </div>
+
+          <div
+            style="
+              font-size:22px;
+              font-weight:800;
+              letter-spacing:0.04em;
+              word-break:break-word;
+            "
+          >
+            ${escapeHTML(
+              orderReference
+            )}
+          </div>
+
+          ${
+            deliveryMethod ===
+            "pickup"
+              ? `
+                <div
+                  style="
+                    margin-top:8px;
+                    font-size:12px;
+                    opacity:0.72;
+                  "
+                >
+                  Customer should present this code when collecting the order.
+                </div>
+              `
+              : ""
+          }
+
+        </div>
+
+
+        <!-- CUSTOMER DETAILS -->
+        <div
+          style="
+            display:grid;
+            gap:8px;
+            margin-bottom:18px;
+            line-height:1.55;
+          "
+        >
+
+          <div>
+            <strong>Customer:</strong>
+            ${escapeHTML(
+              customer.fullName ||
+                "Unknown customer"
+            )}
+          </div>
+
+          <div>
+            <strong>Phone:</strong>
+            ${escapeHTML(
+              customer.phone ||
+                "Not provided"
+            )}
+          </div>
+
+          <div>
+            <strong>Email:</strong>
+            ${escapeHTML(
+              customer.email ||
+                "Not provided"
+            )}
+          </div>
+
+          <div>
+            <strong>Order placed:</strong>
+            ${escapeHTML(
+              createdAt
+            )}
+          </div>
+
+        </div>
+
+
+        <!-- PRODUCTS ORDERED -->
+        <div
+          style="
+            margin-bottom:18px;
+          "
+        >
+
+          <h4
+            style="
+              margin:0 0 10px;
+              font-size:14px;
+            "
+          >
+            Products Ordered
+          </h4>
+
+          <div
+            style="
+              display:grid;
+              gap:8px;
+            "
+          >
+
+            ${
+              items.length
+                ? items
+                    .map(
+                      (item) => {
+
+                        const quantity =
+                          Number(
+                            item.quantity ||
+                              0
+                          );
+
+                        const price =
+                          Number(
+                            item.price ||
+                              0
+                          );
+
+                        const lineTotal =
+                          price *
+                          quantity;
+
+                        const product =
+                          item.productId &&
+                          typeof item.productId ===
+                            "object"
+                            ? item.productId
+                            : null;
+
+                        const itemName =
+                          item.name ||
+                          product?.name ||
+                          "Product";
+
+                        const productId =
+                          product?._id ||
+                          item.productId ||
+                          "";
+
+                        return `
+                          <div
+                            style="
+                              padding:12px 0;
+                              border-bottom:1px solid rgba(0,0,0,0.07);
+                            "
+                          >
+
+                            <div
+                              style="
+                                display:flex;
+                                justify-content:space-between;
+                                align-items:flex-start;
+                                gap:14px;
+                              "
+                            >
+
+                              <div
+                                style="
+                                  min-width:0;
+                                  flex:1;
+                                "
+                              >
+
+                                <strong
+                                  style="
+                                    display:block;
+                                    word-break:break-word;
+                                  "
+                                >
+                                  ${escapeHTML(
+                                    itemName
+                                  )}
+                                </strong>
+
+                                <span
+                                  style="
+                                    display:block;
+                                    margin-top:4px;
+                                    font-size:12px;
+                                    opacity:0.72;
+                                  "
+                                >
+                                  Quantity: ${quantity}
+                                </span>
+
+                                <span
+                                  style="
+                                    display:block;
+                                    font-size:12px;
+                                    opacity:0.72;
+                                  "
+                                >
+                                  Unit price: ₦${price.toLocaleString()}
+                                </span>
+
+                                ${
+                                  productId
+                                    ? `
+                                      <span
+                                        style="
+                                          display:block;
+                                          margin-top:4px;
+                                          font-size:11px;
+                                          opacity:0.55;
+                                          word-break:break-all;
+                                        "
+                                      >
+                                        Product ID: ${escapeHTML(
+                                          productId
+                                        )}
+                                      </span>
+                                    `
+                                    : ""
+                                }
+
+                              </div>
+
+                              <strong
+                                style="
+                                  white-space:nowrap;
+                                "
+                              >
+                                ₦${lineTotal.toLocaleString()}
+                              </strong>
+
+                            </div>
+
+                          </div>
+                        `;
+                      }
+                    )
+                    .join("")
+                : `
+                    <div
+                      style="
+                        opacity:0.7;
+                      "
+                    >
+                      No item details available.
+                    </div>
+                  `
+            }
+
+          </div>
+
+        </div>
+
+
+        <!-- FULFILMENT -->
+        <div
+          style="
+            display:grid;
+            gap:8px;
+            margin-bottom:18px;
+            line-height:1.55;
+          "
+        >
+
+          <div>
+            <strong>Fulfilment:</strong>
+            ${escapeHTML(
+              deliveryMethod ===
+                "pickup"
+                ? "Pickup"
+                : "Delivery"
+            )}
+          </div>
+
+          ${
+            deliveryMethod ===
+            "pickup"
+              ? `
+                <div>
+                  <strong>Pickup location:</strong>
+                  ${escapeHTML(
+                    deliveryAddress
+                  )}
+                </div>
+              `
+              : `
+                <div>
+                  <strong>Delivery area:</strong>
+                  ${escapeHTML(
+                    deliveryAreaName
+                  )}
+                </div>
+
+                <div>
+                  <strong>Delivery address:</strong>
+                  ${escapeHTML(
+                    deliveryAddress
+                  )}
+                </div>
+              `
+          }
+
+        </div>
+
+
+        <!-- TOTAL -->
+        <div
+          style="
+            display:grid;
+            gap:8px;
+            padding:14px;
+            margin-bottom:18px;
+            border-radius:12px;
+            background:rgba(0,0,0,0.035);
+          "
+        >
+
+          <div
+            style="
+              display:flex;
+              justify-content:space-between;
+              gap:12px;
+            "
+          >
+            <span>Subtotal</span>
+            <strong>
+              ₦${subtotal.toLocaleString()}
+            </strong>
+          </div>
+
+          <div
+            style="
+              display:flex;
+              justify-content:space-between;
+              gap:12px;
+            "
+          >
+            <span>Delivery fee</span>
+            <strong>
+              ₦${deliveryFee.toLocaleString()}
+            </strong>
+          </div>
+
+          <div
+            style="
+              display:flex;
+              justify-content:space-between;
+              gap:12px;
+              padding-top:8px;
+              border-top:1px solid rgba(0,0,0,0.09);
+              font-size:17px;
+            "
+          >
+            <span>Total</span>
+            <strong>
+              ₦${total.toLocaleString()}
+            </strong>
+          </div>
+
+        </div>
+
+
+        <!-- PAYMENT REFERENCE -->
+        <div
+          style="
+            display:grid;
+            gap:7px;
+            margin-bottom:18px;
+            line-height:1.5;
+          "
+        >
+
+          <div>
+            <strong>Payment status:</strong>
+            ${escapeHTML(
+              formatPaymentStatus(
+                paymentStatus
+              )
+            )}
+          </div>
+
+          <div
+            style="
+              font-size:12px;
+              opacity:0.72;
+              word-break:break-all;
+            "
+          >
+            <strong>Paystack reference:</strong>
+            ${escapeHTML(
+              paymentReference
+            )}
+          </div>
+
+        </div>
+
+
+        <!-- ORDER STATUS -->
+        <div
+          style="
+            display:grid;
+            gap:9px;
+          "
+        >
+
+          <label
+            for="order-status-${escapeHTML(
+              orderDatabaseId
+            )}"
+          >
+            <strong>Order Status</strong>
+          </label>
+
+          <select
+            id="order-status-${escapeHTML(
+              orderDatabaseId
+            )}"
+            class="order-status-select"
+            data-order-id="${escapeHTML(
+              orderDatabaseId
+            )}"
+          >
+            ${getOrderStatusOptions(
+              orderStatus
+            )}
+          </select>
+
+          <button
+            type="button"
+            class="action-button edit-button"
+            onclick="updateOrderStatus('${escapeHTML(
+              orderDatabaseId
+            )}')"
+          >
+            Update Order Status
+          </button>
+
+        </div>
+
+      </div>
+    </article>
+  `;
+}
+
+
+// =====================================================
+// ORDER STATUS OPTIONS
+// =====================================================
+function getOrderStatusOptions(
+  currentStatus
+) {
+
+  const statuses = [
+    "pending",
+    "confirmed",
+    "ready_for_pickup",
+    "processing",
+    "shipped",
+    "delivered",
+    "collected",
+    "cancelled"
+  ];
+
+  return statuses
+    .map(
+      (status) => `
+        <option
+          value="${status}"
+          ${
+            status ===
+            currentStatus
+              ? "selected"
+              : ""
+          }
+        >
+          ${escapeHTML(
+            formatOrderStatus(
+              status
+            )
+          )}
+        </option>
+      `
+    )
+    .join("");
+}
+
+
+// =====================================================
+// FORMAT ORDER STATUS
+// =====================================================
+function formatOrderStatus(
+  status
+) {
+
+  const labels = {
+    pending:
+      "Pending",
+    confirmed:
+      "Confirmed",
+    ready_for_pickup:
+      "Ready for Pickup",
+    processing:
+      "Processing",
+    shipped:
+      "Shipped",
+    delivered:
+      "Delivered",
+    collected:
+      "Collected",
+    cancelled:
+      "Cancelled"
+  };
+
+  return (
+    labels[status] ||
+    String(
+      status ||
+        "Pending"
+    )
+  );
+}
+
+
+// =====================================================
+// FORMAT PAYMENT STATUS
+// =====================================================
+function formatPaymentStatus(
+  status
+) {
+
+  const labels = {
+    pending:
+      "Payment Pending",
+    paid:
+      "Paid",
+    failed:
+      "Payment Failed"
+  };
+
+  return (
+    labels[status] ||
+    String(
+      status ||
+        "Pending"
+    )
+  );
+}
+
+
+// =====================================================
+// FORMAT ORDER DATE
+// =====================================================
+function formatOrderDate(
+  value
+) {
+
+  try {
+    return new Date(
+      value
+    ).toLocaleString(
+      "en-NG",
+      {
+        dateStyle: "medium",
+        timeStyle: "short"
+      }
+    );
+  } catch {
+    return String(value);
+  }
+}
+
+
+// =====================================================
+// UPDATE ORDER STATUS
+// =====================================================
+async function updateOrderStatus(
+  orderId
+) {
+
+  const token =
+    localStorage.getItem(
+      "yemsAdminToken"
+    );
+
+  if (!token) {
+    showLogin();
+    return;
+  }
+
+  const select =
+    document.querySelector(
+      `.order-status-select[data-order-id="${orderId}"]`
+    );
+
+  if (!select) {
+    showMessage(
+      ordersMessage,
+      "Could not find this order.",
+      "error"
+    );
+
+    return;
+  }
+
+  const newStatus =
+    select.value;
+
+  try {
+
+    const response =
+      await fetch(
+        `/orders/${orderId}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type":
+              "application/json",
+            Authorization:
+              `Bearer ${token}`
+          },
+          body:
+            JSON.stringify({
+              orderStatus:
+                newStatus
+            })
+        }
+      );
+
+    const data =
+      await response.json();
+
+    if (
+      response.status === 401 ||
+      response.status === 403
+    ) {
+
+      localStorage.removeItem(
+        "yemsAdminToken"
+      );
+
+      showLogin();
+
+      throw new Error(
+        "Your admin session has expired. Please login again."
+      );
+    }
+
+    if (!response.ok) {
+      throw new Error(
+        data.message ||
+          "Unable to update order status."
+      );
+    }
+
+    showMessage(
+      ordersMessage,
+      "Order status updated successfully.",
+      "success"
+    );
+
+    await loadOrders();
+
+  } catch (error) {
+
+    console.error(
+      "Update order status error:",
+      error
+    );
+
+    showMessage(
+      ordersMessage,
+      error.message ||
+        "Unable to update order status.",
+      "error"
+    );
+  }
+}
+
+
+// =====================================================
+// ORDER SEARCH / FILTER CONTROLS
+// =====================================================
+if (searchOrdersButton) {
+  searchOrdersButton.addEventListener(
+    "click",
+    loadOrders
+  );
+}
+
+if (refreshOrdersButton) {
+  refreshOrdersButton.addEventListener(
+    "click",
+    loadOrders
+  );
+}
+
+if (orderMethodFilter) {
+  orderMethodFilter.addEventListener(
+    "change",
+    loadOrders
+  );
+}
+
+if (orderStatusFilter) {
+  orderStatusFilter.addEventListener(
+    "change",
+    loadOrders
+  );
+}
+
+if (orderPaymentFilter) {
+  orderPaymentFilter.addEventListener(
+    "change",
+    loadOrders
+  );
+}
+
+if (orderSearch) {
+  orderSearch.addEventListener(
+    "keydown",
+    (event) => {
+
+      if (
+        event.key ===
+        "Enter"
+      ) {
+        event.preventDefault();
+        loadOrders();
+      }
+    }
+  );
 }
 
 

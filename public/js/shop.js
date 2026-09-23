@@ -9,52 +9,35 @@ let cart = JSON.parse(localStorage.getItem("yemsCart")) || [];
 // ===============================
 // LOAD PRODUCTS FROM BACKEND
 // ===============================
-  async function loadProducts() {
+async function loadProducts() {
   if (!productGrid) return;
 
   productGrid.classList.add("loading");
 
   try {
-    const response = await fetch(
-      "/products",
-      {
-        cache: "no-store"
-      }
-    );
+    const response = await fetch("/products", {
+      cache: "no-store"
+    });
 
-    const result =
-      await response.json();
+    const result = await response.json();
 
-    if (
-      !response.ok ||
-      !result.success
-    ) {
+    if (!response.ok || !result.success) {
       throw new Error(
-        result.message ||
-          "Failed to load products"
+        result.message || "Failed to load products"
       );
     }
 
-    products =
-      result.products || [];
+    products = result.products || [];
 
     // Remove products from the local cart
     // that no longer exist in the database.
-    const validProductIds =
-      new Set(
-        products.map(
-          (product) =>
-            String(product._id)
-        )
-      );
+    const validProductIds = new Set(
+      products.map((product) => String(product._id))
+    );
 
-    cart =
-      cart.filter(
-        (item) =>
-          validProductIds.has(
-            String(item.productId)
-          )
-      );
+    cart = cart.filter((item) =>
+      validProductIds.has(String(item.productId))
+    );
 
     localStorage.setItem(
       "yemsCart",
@@ -78,16 +61,14 @@ let cart = JSON.parse(localStorage.getItem("yemsCart")) || [];
     `;
 
   } finally {
-    productGrid.classList.remove(
-      "loading"
-    );
+    productGrid.classList.remove("loading");
   }
 }
+
 
 // ===============================
 // RENDER PRODUCTS
 // ===============================
-
 function renderProducts(items) {
   if (!productGrid) return;
 
@@ -209,9 +190,13 @@ function renderProducts(items) {
                 ).toLocaleString()}
               </span>
 
-              <span class="product-arrow">
-                ↗
-              </span>
+              <a
+                href="product-details.html?id=${encodeURIComponent(product._id)}"
+                class="product-details-link"
+                aria-label="View details for ${escapeHTML(product.name)}"
+              >
+                View details <span>→</span>
+              </a>
 
             </div>
 
@@ -229,7 +214,6 @@ function renderProducts(items) {
 // ===============================
 // ADD TO CART BUTTONS
 // ===============================
-
 function attachAddToCartButtons() {
   const buttons =
     document.querySelectorAll(".add-to-cart-btn");
@@ -245,7 +229,6 @@ function attachAddToCartButtons() {
 // ===============================
 // ADD PRODUCT TO CART
 // ===============================
-
 function addToCart(productId) {
   const product = products.find(
     (item) => item._id === productId
@@ -334,7 +317,6 @@ function addToCart(productId) {
 // ===============================
 // CART COUNT
 // ===============================
-
 function updateCartCount() {
   const currentCart =
     JSON.parse(
@@ -360,7 +342,6 @@ function updateCartCount() {
 // ===============================
 // CATEGORY FILTER
 // ===============================
-
 function filterProducts(category) {
   if (
     !category ||
@@ -385,7 +366,6 @@ function filterProducts(category) {
 // ===============================
 // SELECT FILTER
 // ===============================
-
 if (categoryFilter) {
   categoryFilter.addEventListener(
     "change",
@@ -416,7 +396,6 @@ if (categoryFilter) {
 // ===============================
 // SIDEBAR FILTER BUTTONS
 // ===============================
-
 document
   .querySelectorAll(".filter-btn")
   .forEach((button) => {
@@ -453,7 +432,6 @@ document
 // ===============================
 // ESCAPE HTML
 // ===============================
-
 function escapeHTML(value) {
   return String(value)
     .replaceAll("&", "&amp;")
@@ -467,6 +445,5 @@ function escapeHTML(value) {
 // ===============================
 // START
 // ===============================
-
 loadProducts();
 updateCartCount();

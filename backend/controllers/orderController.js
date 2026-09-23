@@ -1,15 +1,12 @@
 const crypto = require("crypto");
 
-const Order =
-  require("../models/orderModel");
-
-const Product =
-  require("../models/productModel");
+const Order = require("../models/orderModel");
+const Product = require("../models/productModel");
 
 
-/* =====================================================
-   CONFIG
-===================================================== */
+// =====================================================
+// CONFIG
+// =====================================================
 
 const PAYSTACK_SECRET_KEY =
   process.env.PAYSTACK_SECRET_KEY;
@@ -18,220 +15,127 @@ const PAYSTACK_API_URL =
   "https://api.paystack.co";
 
 
-/* =====================================================
-   ORDER REFERENCE
-===================================================== */
+// =====================================================
+// GENERATE UNIQUE ORDER REFERENCE
+// =====================================================
 
-function generateOrderReference() {
+const generateOrderReference = () => {
+  const date = new Date()
+    .toISOString()
+    .slice(0, 10)
+    .replace(/-/g, "");
 
-  const date =
-    new Date()
-      .toISOString()
-      .slice(0, 10)
-      .replace(/-/g, "");
-
-
-  const randomPart =
-    crypto
-      .randomBytes(3)
-      .toString("hex")
-      .toUpperCase();
-
+  const randomPart = crypto
+    .randomBytes(3)
+    .toString("hex")
+    .toUpperCase();
 
   return `YEMS-${date}-${randomPart}`;
+};
 
-}
+
+// =====================================================
+// DELIVERY FEE
+// =====================================================
+
+const getDeliveryFee = (state) => {
+  const deliveryFees = {
+    Lagos: 3000,
+    Abuja: 4000,
+    Oyo: 2500,
+    Ogun: 3000,
+    Ekiti: 2000,
+  };
+
+  return deliveryFees[state] ?? 3500;
+};
 
 
-/* =====================================================
-   BUILD ORDER DATA
-===================================================== */
+// =====================================================
+// BUILD + VALIDATE ORDER
+// =====================================================
 
-async function buildOrderData({
-
+const buildOrderData = async ({
   customer,
-
   items,
+  paymentMethod = "paystack",
+}) => {
 
-  paymentMethod =
-    "paystack",
-
-  deliveryMethod =
-    "delivery"
-
-}) {
-
-  /* -----------------------------------------------
-     CUSTOMER
-  ----------------------------------------------- */
+  // -----------------------------------------------
+  // Validate customer
+  // -----------------------------------------------
 
   if (
-
     !customer ||
-
     !customer.fullName ||
-
     !customer.email ||
-
     !customer.phone ||
-
     !customer.address ||
-
     !customer.city ||
-
     !customer.state
-
   ) {
-
-    const error =
-      new Error(
-        "Please provide all required customer details."
-      );
-
-    error.statusCode =
-      400;
-
-    throw error;
-
+    throw new Error(
+      "Please provide all required customer details"
+    );
   }
 
 
-  /* -----------------------------------------------
-     CART
-  ----------------------------------------------- */
+  // -----------------------------------------------
+  // Validate cart
+  // -----------------------------------------------
 
   if (
-
     !Array.isArray(items) ||
-
     items.length === 0
-
   ) {
-
-    const error =
-      new Error(
-        "Your cart is empty."
-      );
-
-    error.statusCode =
-      400;
-
-    throw error;
-
+    throw new Error("Your cart is empty");
   }
 
 
-  /* -----------------------------------------------
-     PAYMENT METHOD
-  ----------------------------------------------- */
+  // -----------------------------------------------
+  // Validate payment method
+  // -----------------------------------------------
 
-  if (
-    paymentMethod !==
-    "paystack"
-  ) {
-
-    const error =
-      new Error(
-        "Invalid payment method."
-      );
-
-    error.statusCode =
-      400;
-
-    throw error;
-
+  if (paymentMethod !== "paystack") {
+    throw new Error("Invalid payment method");
   }
 
 
-  /* -----------------------------------------------
-     DELIVERY METHOD
-  ----------------------------------------------- */
+  let subtotal = 0;
 
-  if (
-    ![
-      "delivery",
-      "pickup"
-    ].includes(
-      deliveryMethod
-    )
-  ) {
-
-    const error =
-      new Error(
-        "Invalid delivery method."
-      );
-
-    error.statusCode =
-      400;
-
-    throw error;
-
-  }
+  const orderItems = [];
 
 
-  let subtotal =
-    0;
+  // -----------------------------------------------
+  // Validate every cart item
+  // -----------------------------------------------
 
-  const orderItems =
-    [];
-
-
-  /* -----------------------------------------------
-     PRODUCTS
-  ----------------------------------------------- */
-
-  for (
-    const item of items
-  ) {
+  for (const item of items) {
 
     if (
-
       !item.productId ||
-
       !Number.isInteger(
-        Number(
-          item.quantity
-        )
+        Number(item.quantity)
       )
-
     ) {
-
-      const error =
-        new Error(
-          "Invalid product information."
-        );
-
-      error.statusCode =
-        400;
-
-      throw error;
-
+      throw new Error(
+        "Invalid product information"
+      );
     }
 
 
     const quantity =
-      Number(
-        item.quantity
+      Number(item.quantity);
+
+
+    if (quantity < 1) {
+      throw new Error(
+        "Product quantity must be at least 1"
       );
-
-
-    if (
-      quantity < 1
-    ) {
-
-      const error =
-        new Error(
-          "Product quantity must be at least 1."
-        );
-
-      error.statusCode =
-        400;
-
-      throw error;
-
     }
 
 
+    // Get real product from MongoDB
     const product =
       await Product.findById(
         item.productId
@@ -239,348 +143,110 @@ async function buildOrderData({
 
 
     if (!product) {
-
       const error =
         new Error(
           `Product not found: ${item.productId}`
         );
 
-      error.statusCode =
-        404;
+      error.statusCode = 404;
 
       throw error;
-
     }
 
+
+    // ---------------------------------------------
+    // Check real stock
+    // ---------------------------------------------
 
     if (
-      Number(
-        product.stock
-      ) < quantity
+      Number(product.stock) <
+      quantity
     ) {
-
       const error =
         new Error(
-          `${product.name} does not have enough stock.`
+          `${product.name} does not have enough stock`
         );
 
-      error.statusCode =
-        400;
+      error.statusCode = 400;
 
       throw error;
-
     }
 
 
+    // ---------------------------------------------
+    // Calculate using DB price
+    // ---------------------------------------------
+
     const itemTotal =
-      Number(
-        product.price
-      ) *
+      Number(product.price) *
       quantity;
 
+    subtotal += itemTotal;
 
-    subtotal +=
-      itemTotal;
 
+    // ---------------------------------------------
+    // Save product snapshot
+    // ---------------------------------------------
 
     orderItems.push({
-
-      productId:
-        product._id,
-
-      name:
-        product.name,
-
+      productId: product._id,
+      name: product.name,
       quantity,
-
-      price:
-        product.price,
-
-      size:
-        product.size,
-
-      ml:
-        product.ml,
-
-      image:
-        product.image
-
+      price: product.price,
+      size: product.size,
+      ml: product.ml,
+      image: product.image,
     });
-
   }
 
 
-  /*
-    IMPORTANT:
-
-    Delivery is NOT charged through Paystack.
-
-    The customer pays for the products only.
-
-    Delivery arrangements and delivery fee are
-    discussed with the YEMS owner on WhatsApp
-    after payment verification.
-  */
+  // -----------------------------------------------
+  // Delivery + total
+  // -----------------------------------------------
 
   const deliveryFee =
-    0;
-
+    getDeliveryFee(
+      customer.state
+    );
 
   const total =
-    subtotal;
+    subtotal + deliveryFee;
 
 
   return {
-
     orderItems,
-
     subtotal,
-
     deliveryFee,
-
-    total
-
+    total,
   };
+};
 
-}
 
+// =====================================================
+// CREATE ORDER
+// =====================================================
 
-/* =====================================================
-   CREATE ORDER
-===================================================== */
-
-async function createOrder(
-  req,
-  res
-) {
+const createOrder = async (req, res) => {
 
   try {
 
     const {
-
       customer,
-
       items,
-
-      paymentMethod =
-        "paystack",
-
-      deliveryMethod =
-        "delivery"
-
+      paymentMethod = "paystack",
     } = req.body;
 
 
     const {
-
       orderItems,
-
       subtotal,
-
       deliveryFee,
-
-      total
-
-    } =
-      await buildOrderData({
-
-        customer,
-
-        items,
-
-        paymentMethod,
-
-        deliveryMethod
-
-      });
-
-
-    const order =
-      await Order.create({
-
-        orderReference:
-          generateOrderReference(),
-
-
-        customer: {
-
-          fullName:
-            customer.fullName,
-
-          email:
-            customer.email,
-
-          phone:
-            customer.phone,
-
-          address:
-            customer.address,
-
-          city:
-            customer.city,
-
-          state:
-            customer.state,
-
-          additionalNote:
-            customer.additionalNote ||
-            ""
-
-        },
-
-
-        deliveryMethod,
-
-
-        deliveryFee,
-
-
-        deliveryArea:
-          null,
-
-
-        deliveryLocation:
-          null,
-
-
-        items:
-          orderItems,
-
-
-        subtotal,
-
-
-        total,
-
-
-        paymentMethod,
-
-
-        paymentStatus:
-          "pending",
-
-
-        orderStatus:
-          "pending"
-
-      });
-
-
-    return res.status(
-      201
-    ).json({
-
-      status:
-        "success",
-
-      message:
-        "Order created successfully.",
-
-      data: {
-
-        order
-
-      }
-
-    });
-
-
-  } catch (
-    error
-  ) {
-
-    console.error(
-      "Create order error:",
-      error
-    );
-
-
-    return res.status(
-      error.statusCode ||
-      500
-    ).json({
-
-      status:
-        "fail",
-
-      message:
-        error.message ||
-        "Failed to create order."
-
-    });
-
-  }
-
-}
-
-
-/* =====================================================
-   INITIALIZE PAYMENT
-===================================================== */
-
-async function initializePayment(
-  req,
-  res
-) {
-
-  try {
-
-    if (
-      !PAYSTACK_SECRET_KEY
-    ) {
-
-      return res.status(
-        500
-      ).json({
-
-        status:
-          "fail",
-
-        message:
-          "PAYSTACK_SECRET_KEY is not configured on the server."
-
-      });
-
-    }
-
-
-    const {
-
+      total,
+    } = await buildOrderData({
       customer,
-
       items,
-
-      paymentMethod =
-        "paystack",
-
-      deliveryMethod =
-        "delivery"
-
-    } = req.body;
-
-
-    const {
-
-      orderItems,
-
-      subtotal,
-
-      deliveryFee,
-
-      total
-
-    } =
-      await buildOrderData({
-
-        customer,
-
-        items,
-
-        paymentMethod,
-
-        deliveryMethod
-
-      });
+      paymentMethod,
+    });
 
 
     const orderReference =
@@ -592,9 +258,7 @@ async function initializePayment(
 
         orderReference,
 
-
         customer: {
-
           fullName:
             customer.fullName,
 
@@ -615,71 +279,184 @@ async function initializePayment(
 
           additionalNote:
             customer.additionalNote ||
-            ""
-
+            "",
         },
 
 
-        deliveryMethod,
-
-
-        deliveryArea:
-          null,
-
-
-        deliveryLocation:
-          null,
-
-
-        items:
-          orderItems,
-
+        items: orderItems,
 
         subtotal,
 
-
         deliveryFee,
-
 
         total,
 
-
         paymentMethod,
-
 
         paymentStatus:
           "pending",
 
-
         orderStatus:
-          "pending"
-
+          "pending",
       });
 
 
-    /*
-      Paystack expects the amount
-      in the smallest currency unit.
+    res.status(201).json({
+      status: "success",
 
-      We are charging ONLY the
-      product subtotal.
-    */
+      message:
+        "Order created successfully",
+
+      data: {
+        order,
+      },
+    });
+
+  } catch (error) {
+
+    console.error(
+      "Create order error:",
+      error
+    );
+
+
+    res.status(
+      error.statusCode || 500
+    ).json({
+
+      status: "fail",
+
+      message:
+        error.message ||
+        "Failed to create order",
+    });
+  }
+};
+
+
+// =====================================================
+// INITIALIZE PAYSTACK PAYMENT
+// =====================================================
+
+const initializePayment = async (
+  req,
+  res
+) => {
+
+  try {
+
+    if (!PAYSTACK_SECRET_KEY) {
+
+      return res.status(500).json({
+        status: "fail",
+
+        message:
+          "PAYSTACK_SECRET_KEY is not configured on the server.",
+      });
+    }
+
+
+    const {
+      customer,
+      items,
+      paymentMethod = "paystack",
+    } = req.body;
+
+
+    // -----------------------------------------------
+    // Build order using REAL DB prices
+    // -----------------------------------------------
+
+    const {
+      orderItems,
+      subtotal,
+      deliveryFee,
+      total,
+    } = await buildOrderData({
+
+      customer,
+
+      items,
+
+      paymentMethod,
+    });
+
+
+    // -----------------------------------------------
+    // Create pending order first
+    // -----------------------------------------------
+
+    const orderReference =
+      generateOrderReference();
+
+
+    const order =
+      await Order.create({
+
+        orderReference,
+
+        customer: {
+          fullName:
+            customer.fullName,
+
+          email:
+            customer.email,
+
+          phone:
+            customer.phone,
+
+          address:
+            customer.address,
+
+          city:
+            customer.city,
+
+          state:
+            customer.state,
+
+          additionalNote:
+            customer.additionalNote ||
+            "",
+        },
+
+
+        items: orderItems,
+
+        subtotal,
+
+        deliveryFee,
+
+        total,
+
+        paymentMethod,
+
+        paymentStatus:
+          "pending",
+
+        orderStatus:
+          "pending",
+      });
+
+
+    // -----------------------------------------------
+    // Paystack expects amount in subunit
+    // For NGN: naira × 100
+    // -----------------------------------------------
 
     const amountInKobo =
-      Math.round(
-        total * 100
-      );
+      Math.round(total * 100);
 
+
+    // -----------------------------------------------
+    // Initialize transaction
+    // -----------------------------------------------
 
     const paystackResponse =
       await fetch(
-
         `${PAYSTACK_API_URL}/transaction/initialize`,
-
         {
 
-          method:
-            "POST",
+          method: "POST",
 
           headers: {
 
@@ -687,61 +464,45 @@ async function initializePayment(
               `Bearer ${PAYSTACK_SECRET_KEY}`,
 
             "Content-Type":
-              "application/json"
-
+              "application/json",
           },
 
+          body: JSON.stringify({
 
-          body:
-            JSON.stringify({
+            email:
+              customer.email,
 
-              email:
-                customer.email,
+            amount:
+              amountInKobo.toString(),
 
-              amount:
-                amountInKobo.toString(),
+            currency:
+              "NGN",
 
-              currency:
-                "NGN",
+            reference:
+              orderReference,
 
-              reference:
-                orderReference,
+            callback_url:
+              getCallbackUrl(),
 
-              callback_url:
-                getCallbackUrl(),
+            metadata: {
 
+              orderReference,
 
-              metadata: {
+              customerName:
+                customer.fullName,
 
-                orderReference,
+              customerPhone:
+                customer.phone,
+            },
 
-                customerName:
-                  customer.fullName,
-
-                customerPhone:
-                  customer.phone,
-
-                deliveryMethod
-
-              },
-
-
-              channels: [
-
-                "card",
-
-                "bank",
-
-                "ussd",
-
-                "bank_transfer"
-
-              ]
-
-            })
-
+            channels: [
+              "card",
+              "bank",
+              "ussd",
+              "bank_transfer",
+            ],
+          }),
         }
-
       );
 
 
@@ -750,50 +511,52 @@ async function initializePayment(
 
 
     if (
-
       !paystackResponse.ok ||
-
       !paystackData.status
-
     ) {
 
+      // If initialization fails,
+      // remove the pending order
       await Order.findByIdAndDelete(
         order._id
       );
 
 
-      return res.status(
-        400
-      ).json({
+      return res.status(400).json({
 
-        status:
-          "fail",
+        status: "fail",
 
         message:
           paystackData.message ||
-          "Unable to initialize Paystack payment."
-
+          "Unable to initialize Paystack payment",
       });
-
     }
 
 
-    order.paystackReference =
+    // -----------------------------------------------
+    // Save Paystack reference
+    // -----------------------------------------------
+
+    const paystackReference =
       paystackData.data.reference;
 
+
+    order.paystackReference =
+      paystackReference;
 
     await order.save();
 
 
-    return res.status(
-      200
-    ).json({
+    // -----------------------------------------------
+    // Send checkout URL to frontend
+    // -----------------------------------------------
 
-      status:
-        "success",
+    return res.status(200).json({
+
+      status: "success",
 
       message:
-        "Payment initialized successfully.",
+        "Payment initialized successfully",
 
       data: {
 
@@ -803,7 +566,7 @@ async function initializePayment(
         orderReference,
 
         reference:
-          paystackData.data.reference,
+          paystackReference,
 
         authorization_url:
           paystackData.data.authorization_url,
@@ -818,16 +581,11 @@ async function initializePayment(
 
         deliveryFee,
 
-        total
-
-      }
-
+        total,
+      },
     });
 
-
-  } catch (
-    error
-  ) {
+  } catch (error) {
 
     console.error(
       "Initialize payment error:",
@@ -836,179 +594,93 @@ async function initializePayment(
 
 
     return res.status(
-      error.statusCode ||
-      500
+      error.statusCode || 500
     ).json({
 
-      status:
-        "fail",
+      status: "fail",
 
       message:
         error.message ||
-        "Failed to initialize payment."
-
+        "Failed to initialize payment",
     });
-
   }
+};
 
-}
 
+// =====================================================
+// GET CALLBACK URL
+// =====================================================
 
-/* =====================================================
-   CALLBACK URL
-===================================================== */
+const getCallbackUrl = () => {
 
-function getCallbackUrl() {
-
+  // Optional override for a custom owner domain.
+  // Example:
+  // https://example.com/payment-success.html
   if (
-    process.env.PAYSTACK_CALLBACK_URL
+    process.env.PAYSTACK_CALLBACK_URL &&
+    process.env.PAYSTACK_CALLBACK_URL.trim()
   ) {
-
-    return (
-      process.env
-        .PAYSTACK_CALLBACK_URL
-    );
-
+    return process.env.PAYSTACK_CALLBACK_URL.trim();
   }
 
 
-  return (
-    "http://localhost:5000/payment-success.html"
-  );
+  // Render provides RENDER_EXTERNAL_URL automatically
+  // for deployed web services.
+  if (
+    process.env.RENDER_EXTERNAL_URL &&
+    process.env.RENDER_EXTERNAL_URL.trim()
+  ) {
+    return `${process.env.RENDER_EXTERNAL_URL.replace(/\/$/, "")}/payment-success.html`;
+  }
 
-}
+
+  // Local development fallback.
+  return "http://localhost:5000/payment-success.html";
+};
 
 
-/* =====================================================
-   VERIFY PAYMENT
-===================================================== */
+// =====================================================
+// VERIFY PAYSTACK PAYMENT
+// =====================================================
 
-async function verifyPayment(
+const verifyPayment = async (
   req,
   res
-) {
+) => {
 
   try {
 
-    if (
-      !PAYSTACK_SECRET_KEY
-    ) {
+    if (!PAYSTACK_SECRET_KEY) {
 
-      return res.status(
-        500
-      ).json({
+      return res.status(500).json({
 
-        status:
-          "fail",
+        status: "fail",
 
         message:
-          "PAYSTACK_SECRET_KEY is not configured on the server."
-
+          "PAYSTACK_SECRET_KEY is not configured on the server.",
       });
-
     }
 
 
     const reference =
-      String(
-        req.params.reference ||
-        ""
-      ).trim();
+      req.params.reference;
 
 
     if (!reference) {
 
-      return res.status(
-        400
-      ).json({
+      return res.status(400).json({
 
-        status:
-          "fail",
+        status: "fail",
 
         message:
-          "Payment reference is required."
-
+          "Payment reference is required",
       });
-
     }
 
 
-    const order =
-      await Order.findOne({
-
-        $or: [
-
-          {
-            paystackReference:
-              reference
-          },
-
-          {
-            orderReference:
-              reference
-          }
-
-        ]
-
-      });
-
-
-    if (!order) {
-
-      return res.status(
-        404
-      ).json({
-
-        status:
-          "fail",
-
-        message:
-          "Order associated with this payment was not found."
-
-      });
-
-    }
-
-
-    /*
-      Idempotency:
-
-      Refreshing the success page must
-      not reduce stock again.
-    */
-
-    if (
-      order.paymentStatus ===
-      "paid"
-    ) {
-
-      return res.status(
-        200
-      ).json({
-
-        status:
-          "success",
-
-        message:
-          "Payment already verified.",
-
-        data: {
-
-          order:
-            await Order.findById(
-              order._id
-            )
-
-        }
-
-      });
-
-    }
-
-
-    /* -----------------------------------------------
-       VERIFY WITH PAYSTACK
-    ----------------------------------------------- */
+    // -----------------------------------------------
+    // Verify transaction with Paystack
+    // -----------------------------------------------
 
     const paystackResponse =
       await fetch(
@@ -1019,21 +691,14 @@ async function verifyPayment(
 
         {
 
-          method:
-            "GET",
+          method: "GET",
 
           headers: {
 
             Authorization:
               `Bearer ${PAYSTACK_SECRET_KEY}`,
-
-            "Content-Type":
-              "application/json"
-
-          }
-
+          },
         }
-
       );
 
 
@@ -1042,28 +707,18 @@ async function verifyPayment(
 
 
     if (
-
       !paystackResponse.ok ||
-
-      !paystackData.status ||
-
-      !paystackData.data
-
+      !paystackData.status
     ) {
 
-      return res.status(
-        400
-      ).json({
+      return res.status(400).json({
 
-        status:
-          "fail",
+        status: "fail",
 
         message:
           paystackData.message ||
-          "Unable to verify payment."
-
+          "Unable to verify payment",
       });
-
     }
 
 
@@ -1071,75 +726,117 @@ async function verifyPayment(
       paystackData.data;
 
 
-    /*
-      Paystack says the transaction
-      must actually be successful.
-    */
+    // -----------------------------------------------
+    // Payment must actually be successful
+    // -----------------------------------------------
 
     if (
       transaction.status !==
       "success"
     ) {
 
-      order.paymentStatus =
-        "failed";
+      return res.status(400).json({
 
-
-      await order.save();
-
-
-      return res.status(
-        400
-      ).json({
-
-        status:
-          "fail",
+        status: "fail",
 
         message:
-          `Payment status is ${transaction.status}.`
+          `Payment status is ${transaction.status}`,
 
+        data: {
+          reference,
+          paymentStatus:
+            transaction.status,
+        },
       });
-
     }
 
 
-    /* -----------------------------------------------
-       AMOUNT CHECK
-    ----------------------------------------------- */
+    // -----------------------------------------------
+    // Find our order
+    // -----------------------------------------------
+
+    const order =
+      await Order.findOne({
+        paystackReference:
+          reference,
+      });
+
+
+    if (!order) {
+
+      return res.status(404).json({
+
+        status: "fail",
+
+        message:
+          "Order associated with this payment was not found",
+      });
+    }
+
+
+    // -----------------------------------------------
+    // Prevent double stock deduction
+    // -----------------------------------------------
+
+    if (
+      order.paymentStatus ===
+      "paid"
+    ) {
+
+      return res.status(200).json({
+
+        status: "success",
+
+        message:
+          "Payment has already been verified",
+
+        data: {
+          order,
+        },
+      });
+    }
+
+
+    // -----------------------------------------------
+    // Verify amount
+    // -----------------------------------------------
 
     const expectedAmount =
       Math.round(
-        Number(
-          order.total
-        ) * 100
+        Number(order.total) *
+        100
+      );
+
+
+    const paidAmount =
+      Number(
+        transaction.amount
       );
 
 
     if (
-      Number(
-        transaction.amount
-      ) !==
+      paidAmount !==
       expectedAmount
     ) {
 
-      return res.status(
-        400
-      ).json({
+      return res.status(400).json({
 
-        status:
-          "fail",
+        status: "fail",
 
         message:
-          "Payment amount does not match the order amount."
+          "Payment amount does not match the order total",
 
+        data: {
+          expectedAmount,
+          paidAmount,
+        },
       });
-
     }
 
 
-    /* -----------------------------------------------
-       CHECK STOCK AGAIN
-    ----------------------------------------------- */
+    // -----------------------------------------------
+    // Check stock again before deduction
+    // -----------------------------------------------
 
     for (
       const item of order.items
@@ -1151,159 +848,103 @@ async function verifyPayment(
         );
 
 
-      if (
+      if (!product) {
 
-        !product ||
+        return res.status(404).json({
 
-        Number(
-          product.stock
-        ) <
-        Number(
-          item.quantity
-        )
-
-      ) {
-
-        return res.status(
-          400
-        ).json({
-
-          status:
-            "fail",
+          status: "fail",
 
           message:
-            `${item.name} is no longer available in the requested quantity.`
-
+            `Product ${item.name} is no longer available`,
         });
-
       }
 
+
+      if (
+        Number(product.stock) <
+        Number(item.quantity)
+      ) {
+
+        return res.status(400).json({
+
+          status: "fail",
+
+          message:
+            `${product.name} no longer has enough stock`,
+        });
+      }
     }
 
 
-    /* -----------------------------------------------
-       REDUCE STOCK
-    ----------------------------------------------- */
+    // -----------------------------------------------
+    // Reduce stock AFTER successful payment
+    // -----------------------------------------------
 
     for (
       const item of order.items
     ) {
 
-      const updatedProduct =
-        await Product.findOneAndUpdate(
+      await Product.findByIdAndUpdate(
 
-          {
+        item.productId,
 
-            _id:
-              item.productId,
-
-            stock: {
-
-              $gte:
-                Number(
-                  item.quantity
-                )
-
-            }
-
+        {
+          $inc: {
+            stock:
+              -Number(
+                item.quantity
+              ),
           },
-
-
-          {
-
-            $inc: {
-
-              stock:
-                -Number(
-                  item.quantity
-                )
-
-            }
-
-          },
-
-
-          {
-
-            new:
-              true
-
-          }
-
-        );
-
-
-      if (!updatedProduct) {
-
-        return res.status(
-          409
-        ).json({
-
-          status:
-            "fail",
-
-          message:
-            `${item.name} could not be reserved. Please contact YEMS PERFUME.`
-
-        });
-
-      }
-
+        }
+      );
     }
 
 
-    /* -----------------------------------------------
-       MARK ORDER PAID
-    ----------------------------------------------- */
+    // -----------------------------------------------
+    // Mark order as paid
+    // -----------------------------------------------
 
     order.paymentStatus =
       "paid";
 
-
-    order.paystackReference =
-      transaction.reference;
-
+    order.orderStatus =
+      "confirmed";
 
     order.paidAt =
-      transaction.paid_at
-        ? new Date(
-            transaction.paid_at
-          )
-        : new Date();
+      new Date();
 
-            order.orderStatus =
-  order.deliveryMethod === "pickup"
-    ? "ready_for_pickup"
-    : "confirmed";
 
     await order.save();
 
 
-    return res.status(
-      200
-    ).json({
+    return res.status(200).json({
 
-      status:
-        "success",
+      status: "success",
 
       message:
-        "Payment verified successfully.",
+        "Payment verified successfully",
 
       data: {
 
-        order:
-          await Order.findById(
-            order._id
-          )
+        order,
 
-      }
+        transaction: {
+          reference:
+            transaction.reference,
 
+          status:
+            transaction.status,
+
+          amount:
+            transaction.amount,
+
+          currency:
+            transaction.currency,
+        },
+      },
     });
 
-
-  } catch (
-    error
-  ) {
+  } catch (error) {
 
     console.error(
       "Verify payment error:",
@@ -1311,177 +952,113 @@ async function verifyPayment(
     );
 
 
-    return res.status(
-      500
-    ).json({
+    return res.status(500).json({
 
-      status:
-        "fail",
+      status: "fail",
 
       message:
-        error.message ||
-        "Failed to verify payment."
+        "Failed to verify payment",
 
+      error:
+        error.message,
     });
-
   }
+};
 
-}
 
+// =====================================================
+// GET ALL ORDERS
+// =====================================================
 
-/* =====================================================
-   GET ORDERS
-===================================================== */
+const getOrders = async (
+  req,
+  res
+) => {
 
-async function getOrders(req, res) {
   try {
-    const {
-      search = "",
-      deliveryMethod = "",
-      orderStatus = "",
-      paymentStatus = "",
-    } = req.query;
 
-    const query = {};
+    const orders =
+      await Order.find()
+        .populate(
+          "items.productId"
+        )
+        .sort({
+          createdAt: -1,
+        });
 
-    const cleanSearch = String(search).trim();
 
-    if (cleanSearch) {
-      const safeSearch = cleanSearch.replace(
-        /[.*+?^${}()|[\]\\]/g,
-        "\\$&"
-      );
+    res.status(200).json({
 
-      const regex = new RegExp(
-        safeSearch,
-        "i"
-      );
-
-      query.$or = [
-        {
-          orderReference: regex,
-        },
-        {
-          "customer.fullName": regex,
-        },
-        {
-          "customer.phone": regex,
-        },
-        {
-          "customer.email": regex,
-        },
-      ];
-    }
-
-    if (
-      deliveryMethod === "delivery" ||
-      deliveryMethod === "pickup"
-    ) {
-      query.deliveryMethod =
-        deliveryMethod;
-    }
-
-    if (orderStatus) {
-      query.orderStatus =
-        orderStatus;
-    }
-
-    if (
-      paymentStatus === "pending" ||
-      paymentStatus === "paid" ||
-      paymentStatus === "failed"
-    ) {
-      query.paymentStatus =
-        paymentStatus;
-    }
-
-    const orders = await Order.find(query)
-      .populate("items.productId")
-      .populate("deliveryArea.areaId")
-      .sort({
-        createdAt: -1,
-      });
-
-    return res.status(200).json({
       status: "success",
-      results: orders.length,
+
+      results:
+        orders.length,
+
       data: {
         orders,
       },
     });
 
   } catch (error) {
+
     console.error(
       "Get orders error:",
       error
     );
 
-    return res.status(500).json({
+
+    res.status(500).json({
+
       status: "fail",
-      message: "Unable to load orders.",
+
+      message:
+        error.message,
     });
   }
-}
-/* =====================================================
-   GET ONE ORDER
-===================================================== */
+};
 
-async function getOrder(
+
+// =====================================================
+// GET ONE ORDER
+// =====================================================
+
+const getOrder = async (
   req,
   res
-) {
+) => {
 
   try {
 
     const order =
       await Order.findById(
         req.params.id
-      )
-
-        .populate(
-          "items.productId"
-        )
-
-        .populate(
-          "deliveryArea.areaId"
-        );
+      ).populate(
+        "items.productId"
+      );
 
 
     if (!order) {
 
-      return res.status(
-        404
-      ).json({
+      return res.status(404).json({
 
-        status:
-          "fail",
+        status: "fail",
 
         message:
-          "Order not found."
-
+          "Order not found",
       });
-
     }
 
 
-    return res.status(
-      200
-    ).json({
+    res.status(200).json({
 
-      status:
-        "success",
+      status: "success",
 
       data: {
-
-        order
-
-      }
-
+        order,
+      },
     });
 
-  } catch (
-    error
-  ) {
+  } catch (error) {
 
     console.error(
       "Get order error:",
@@ -1489,58 +1066,67 @@ async function getOrder(
     );
 
 
-    return res.status(
-      500
-    ).json({
+    res.status(500).json({
 
-      status:
-        "fail",
+      status: "fail",
 
       message:
-        "Unable to load order."
-
+        error.message,
     });
-
   }
+};
 
-}
 
+// =====================================================
+// UPDATE ORDER
+// =====================================================
 
-/* =====================================================
-   UPDATE ORDER
-===================================================== */
-
-async function updateOrder(
+const updateOrder = async (
   req,
   res
-) {
+) => {
 
   try {
 
-    const allowedFields =
-      [
-        "orderStatus"
-      ];
+    const {
+      orderStatus,
+      paymentStatus,
+    } = req.body;
 
 
-    const updates = {};
+    const updateFields = {};
 
 
-    allowedFields.forEach(
-      (field) => {
+    if (
+      orderStatus !== undefined
+    ) {
+      updateFields.orderStatus =
+        orderStatus;
+    }
 
-        if (
-          req.body[field] !==
-          undefined
-        ) {
 
-          updates[field] =
-            req.body[field];
+    if (
+      paymentStatus !== undefined
+    ) {
+      updateFields.paymentStatus =
+        paymentStatus;
+    }
 
-        }
 
-      }
-    );
+    if (
+      Object.keys(
+        updateFields
+      ).length === 0
+    ) {
+
+      return res.status(400).json({
+
+        status: "fail",
+
+        message:
+          "Provide orderStatus or paymentStatus",
+      });
+    }
 
 
     const order =
@@ -1548,59 +1134,40 @@ async function updateOrder(
 
         req.params.id,
 
-        updates,
+        updateFields,
 
         {
-
-          new:
-            true,
-
-          runValidators:
-            true
-
+          new: true,
+          runValidators: true,
         }
-
       );
 
 
     if (!order) {
 
-      return res.status(
-        404
-      ).json({
+      return res.status(404).json({
 
-        status:
-          "fail",
+        status: "fail",
 
         message:
-          "Order not found."
-
+          "Order not found",
       });
-
     }
 
 
-    return res.status(
-      200
-    ).json({
+    res.status(200).json({
 
-      status:
-        "success",
+      status: "success",
 
       message:
-        "Order updated successfully.",
+        "Order updated successfully",
 
       data: {
-
-        order
-
-      }
-
+        order,
+      },
     });
 
-  } catch (
-    error
-  ) {
+  } catch (error) {
 
     console.error(
       "Update order error:",
@@ -1608,27 +1175,23 @@ async function updateOrder(
     );
 
 
-    return res.status(
-      500
-    ).json({
+    res.status(400).json({
 
-      status:
-        "fail",
+      status: "fail",
 
       message:
-        error.message ||
-        "Unable to update order."
+        "Failed to update order",
 
+      error:
+        error.message,
     });
-
   }
+};
 
-}
 
-
-/* =====================================================
-   EXPORTS
-===================================================== */
+// =====================================================
+// EXPORTS
+// =====================================================
 
 module.exports = {
 
@@ -1642,6 +1205,5 @@ module.exports = {
 
   getOrder,
 
-  updateOrder
-
+  updateOrder,
 };

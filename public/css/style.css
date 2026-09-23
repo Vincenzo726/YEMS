@@ -2323,3 +2323,84 @@ body.dark-theme.home-page .footer-brand p {
   }
 
 }
+/* =====================================================
+   YEMS MOBILE RESPONSIVENESS FIX
+===================================================== */
+
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+
+/* =====================================================
+   MOBILE TYPOGRAPHY
+===================================================== */
+
+@media (max-width: 650px) {
+
+  .section-heading h2 {
+    font-size: 36px;
+    line-height: 1;
+    letter-spacing: -1px;
+  }
+
+  .brand-statement h2 {
+    font-size: 40px;
+    line-height: 1;
+    letter-spacing: -1px;
+  }
+
+  .contact-cta h2 {
+    font-size: 38px;
+    line-height: 1;
+    letter-spacing: -1px;
+  }
+
+  .collection-info h3 {
+    font-size: 32px;
+    line-height: 1;
+  }
+
+  .product-info h3 {
+    font-size: 19px;
+    line-height: 1.1;
+    letter-spacing: -0.5px;
+  }
+
+}
+
+
+/* =====================================================
+   SMALL PHONES
+===================================================== */
+
+@media (max-width: 390px) {
+
+  .section-heading h2 {
+    font-size: 32px;
+  }
+
+  .brand-statement h2 {
+    font-size: 35px;
+  }
+
+  .contact-cta h2 {
+    font-size: 34px;
+  }
+
+  .collection-info h3 {
+    font-size: 29px;
+  }
+
+  .product-info h3 {
+    font-size: 18px;
+  }
+
+}
